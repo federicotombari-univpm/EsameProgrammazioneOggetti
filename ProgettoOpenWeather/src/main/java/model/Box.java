@@ -5,6 +5,7 @@ public class Box {
 	private Coordinates maxCoords;
 	private Coordinates minCoords;
 	
+	// i costruttori saranno entrambi utilizzati da chiamate diverse alla nostra API
 	public Box(Coordinates maxCoords, Coordinates minCoords) {
 		this.maxCoords = maxCoords;
 		this.minCoords = minCoords;
