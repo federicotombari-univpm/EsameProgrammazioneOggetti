@@ -5,7 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.net.URLConnection;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -24,27 +25,34 @@ public class DataDownloader {
 	
 	private JSONObject rispAPI = null;
 	private	String line = "";
+	private int HttpsStatus = 0;
 
 	
 	// metodo che tramite l'URL della chiamata all'API salva in una stringa tutta la risposta
-	public void chiamataAPI(String url) throws IOException, ParseException, DataNotFoundException {
+	public void chiamataAPI(String url) throws IOException, ParseException, DataNotFoundException, ClassCastException {
+		
+		rispAPI = null;
+		HttpsStatus = -1;
 		JSONParser parser = new JSONParser();
 		
-			URLConnection openConnection = new URL(url).openConnection();
-			InputStream in = openConnection.getInputStream();
+		HttpsURLConnection openConnection = (HttpsURLConnection) new URL(url).openConnection();
+		HttpsStatus = openConnection.getResponseCode();
+		
+		InputStream in = openConnection.getInputStream(); // qui parte l'eccezione
+		InputStreamReader inR = new InputStreamReader(in);
+		BufferedReader buf = new BufferedReader(inR);
 			
-			InputStreamReader inR = new InputStreamReader(in);
-			BufferedReader buf = new BufferedReader(inR);
+		try {
+			while((line = buf.readLine()) != null) 
+				rispAPI = (JSONObject) parser.parse(line);
 			
-			while((line = buf.readLine()) != null) {
-				 rispAPI = (JSONObject) parser.parse(line); 
-			}
-			
-			if (rispAPI == null)
-				throw new DataNotFoundException();
-			
-			in.close();
+		} catch (ClassCastException e) {
+			throw new DataNotFoundException();
+		}
+		
+		in.close();
 	}
+		
 	
 	public Weather getMain(int i) {
 		JSONObject main = null;
@@ -57,8 +65,8 @@ public class DataDownloader {
 			main = (JSONObject) object.get("main");
 		}
 		
-		double pressure = (double)main.get("pressure");
-		double humidity = (double)main.get("humidity");
+		long pressure = (long)main.get("pressure");
+		long humidity = (long)main.get("humidity");
 		double temperature = (double)main.get("temp");
 		  
 		double visibility = this.getVisibility(i);
@@ -85,16 +93,16 @@ public class DataDownloader {
 	}
 	
 	public double getVisibility(int i) {
-		double visibility = 0;
+		long visibility = 0;
 		if (i == -1) {
-			visibility = (double) rispAPI.get("visibility");
+			visibility = (long) rispAPI.get("visibility");
 		} else {
 			JSONArray list = (JSONArray) rispAPI.get("list");
 			JSONObject object = (JSONObject) list.get(i);
-			visibility = (double) object.get("visibility");
+			visibility = (long) object.get("visibility");
 		}
 
-		return visibility;
+		return (double)visibility;
 	}
 	
 	public String getName(int i) {
@@ -111,25 +119,29 @@ public class DataDownloader {
 	}
 	
 	public Coordinates getCoordinates(int i) throws InvalidParametersException {
-		JSONObject coords = null;
+		JSONObject coord = null;
+		String lon = "lon";
+		String lat = "lat";
 		if (i == -1) {
-			coords = (JSONObject) rispAPI.get("coords");
+			coord = (JSONObject) rispAPI.get("coord");
 		} else {
 			JSONArray list = (JSONArray) rispAPI.get("list");
 			JSONObject object = (JSONObject) list.get(i);
-			coords = (JSONObject) object.get("coords");
+			coord = (JSONObject) object.get("coord");
+			lon = "Lon";
+			lat = "Lat";
 		}
 		
-		double longitude = (double) coords.get("lon");
-		double latitude = (double) coords.get("lat");
+		double longitude = (double) coord.get(lon);
+		double latitude = (double) coord.get(lat);
 		
 		Coordinates cityCoords = new Coordinates(latitude, longitude);
 		return cityCoords;
 	}
 
 	public int getCode() {
-		int code = (int) rispAPI.get("cod");
-		return code;
+		long code = (long) rispAPI.get("cod");
+		return (int)code;
 	}
 	
 	public String getMessage() {
@@ -138,8 +150,12 @@ public class DataDownloader {
 	}
 	
 	public int getCnt() {
-		int cnt = (int) rispAPI.get("cnt");
-		return cnt;
+		long cnt = (long) rispAPI.get("cnt");
+		return (int)cnt;
+	}
+
+	public int getHttpsStatus() {
+		return HttpsStatus;
 	}
 	
 }

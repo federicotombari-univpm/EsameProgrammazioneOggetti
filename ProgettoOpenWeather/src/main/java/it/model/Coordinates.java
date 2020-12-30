@@ -11,7 +11,7 @@ public class Coordinates {
 	// latitudine: -90, +90
 
 	public Coordinates(double latitude, double longitude) throws InvalidParametersException {
-		if(latitude >= -90 && latitude <=90 && longitude >= -180 && latitude <=180) {
+		if(latitude >= -90 && latitude <=90 && longitude >= -180 && longitude <=180) {
 			this.latitude = latitude;
 			this.longitude = longitude;
 		}

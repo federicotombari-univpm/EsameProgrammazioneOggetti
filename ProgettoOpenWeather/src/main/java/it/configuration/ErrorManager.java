@@ -6,7 +6,6 @@ import java.io.IOException;
 import org.json.simple.parser.ParseException;
 
 import it.exception.DataNotFoundException;
-// altre eccezioni da importare
 import it.exception.InvalidParametersException;
 import it.exception.WebServiceException;
 
@@ -21,19 +20,24 @@ public class ErrorManager {
 		
 		info = e.toString();
 		
-		if(e instanceof IOException) {
-			errorId = 301;
-			this.message = "An error occurred while requesting\sending data to the database or to the web server";
-		}
-		
-		else if(e instanceof FileNotFoundException) {
-			errorId = 302;
+		if(e instanceof FileNotFoundException) {
+			errorId = 300;
 			this.message = "An error occurred while searching for the database";
 		}
 		
+		else if(e instanceof IOException) {
+			errorId = 301;
+			this.message = "An error occurred while requesting or sending data to the database or to the web server";
+		}
+		
 		else if(e instanceof ParseException) {
+			errorId = 302;
+			this.message = "An error occurred while parsing the data";
+		}
+		
+		else if(e instanceof ClassCastException || e instanceof NullPointerException) {
 			errorId = 303;
-			this.message = "An error occurred while converting the data";
+			this.message = "Internal error";
 		}
 		
 		else if(e instanceof DataNotFoundException) {

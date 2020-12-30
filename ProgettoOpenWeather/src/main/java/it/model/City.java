@@ -4,12 +4,12 @@ public class City {
 
 	private String name;
 	private Coordinates coords;
-	private Weather cityWeather;
+	private Weather weather;
 	
-	public City(String name, Coordinates coords, Weather cityWeather) {
+	public City(String name, Coordinates coords, Weather weather) {
 		this.name = name;
 		this.coords = coords;
-		this.cityWeather = cityWeather;
+		this.weather = weather;
 	}
 
 	public String getName() {
@@ -29,10 +29,10 @@ public class City {
 	}
 
 	public Weather getCityWeather() {
-		return cityWeather;
+		return weather;
 	}
 
 	public void setCityWeather(Weather cityWeather) {
-		this.cityWeather = cityWeather;
+		this.weather = cityWeather;
 	}
 }
