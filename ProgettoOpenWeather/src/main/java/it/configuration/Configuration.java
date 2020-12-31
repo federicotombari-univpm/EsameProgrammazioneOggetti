@@ -1,5 +1,7 @@
 package it.configuration;
 
+import java.util.Vector;
+
 public class Configuration {
 
 	// costruttore, attributi, metodi sono da completare e rifinire
@@ -7,10 +9,10 @@ public class Configuration {
 	
 	private static String apiKey = "56989104be7410276956586c1fb09bf6";
 	private static String defaultCity = "Ancona";
-	private static String defaultURL = "https://api.openweathermap.org/data/2.5/weather?q="+defaultCity+"&appid="+apiKey;
 	private static String configurationFilename = "config.json";
 	private static String databaseFilename = "database.json";
 	private static int defaultZoom = 10;
+	private static Vector<String> defaultCityList = null;
 	
 	public static String getApiKey() {
 		return apiKey;
@@ -26,14 +28,6 @@ public class Configuration {
 	
 	public static void setDefaultCity(String defaultCity) {
 		Configuration.defaultCity = defaultCity;
-	}
-	
-	public static String getDefaultURL() {
-		return defaultURL;
-	}
-	
-	public static void setDefaultURL(String defaultURL) {
-		Configuration.defaultURL = defaultURL;
 	}
 	
 	public static String getConfigurationFilename() {

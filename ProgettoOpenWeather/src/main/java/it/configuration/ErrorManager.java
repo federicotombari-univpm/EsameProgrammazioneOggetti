@@ -6,7 +6,7 @@ import java.io.IOException;
 import org.json.simple.parser.ParseException;
 
 import it.exception.DataNotFoundException;
-import it.exception.InvalidParametersException;
+import it.exception.InvalidParameterException;
 import it.exception.WebServiceException;
 
 public class ErrorManager {
@@ -45,9 +45,9 @@ public class ErrorManager {
 			this.message = "No data available, please choose different parameters";
 		}
 		
-		else if(e instanceof InvalidParametersException) {
+		else if(e instanceof InvalidParameterException) {
 			errorId = 305;
-			this.message = "Invalid parameters";
+			this.message = "Invalid parameter(s)";
 		}
 		
 		else if(e instanceof WebServiceException) {

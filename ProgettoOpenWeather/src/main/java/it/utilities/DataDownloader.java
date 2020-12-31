@@ -12,7 +12,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import it.exception.DataNotFoundException;
-import it.exception.InvalidParametersException;
+import it.exception.InvalidParameterException;
 import it.model.Coordinates;
 import it.model.Weather;
 
@@ -118,7 +118,7 @@ public class DataDownloader {
 		return cityName;
 	}
 	
-	public Coordinates getCoordinates(int i) throws InvalidParametersException {
+	public Coordinates getCoordinates(int i) throws InvalidParameterException {
 		JSONObject coord = null;
 		String lon = "lon";
 		String lat = "lat";

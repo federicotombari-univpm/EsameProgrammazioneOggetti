@@ -1,6 +1,6 @@
 package it.model;
 
-import it.exception.InvalidParametersException;
+import it.exception.InvalidParameterException;
 
 public class Coordinates {
 
@@ -10,12 +10,12 @@ public class Coordinates {
 	// longitudine: -180, +180
 	// latitudine: -90, +90
 
-	public Coordinates(double latitude, double longitude) throws InvalidParametersException {
+	public Coordinates(double latitude, double longitude) throws InvalidParameterException {
 		if(latitude >= -90 && latitude <=90 && longitude >= -180 && longitude <=180) {
 			this.latitude = latitude;
 			this.longitude = longitude;
 		}
-		else throw new InvalidParametersException();
+		else throw new InvalidParameterException();
 	}
 
 	public double getLatitude() {

@@ -1,7 +1,7 @@
 package it.model;
 
 import it.configuration.Configuration;
-import it.exception.InvalidParametersException;
+import it.exception.InvalidParameterException;
 
 public class Box {
 
@@ -16,7 +16,7 @@ public class Box {
 		this.zoom = Configuration.getDefaultZoom();
 	}
 	
-	public Box(double maxLatitude, double maxLongitude, double minLatitude, double minLongitude, int zoom) throws InvalidParametersException {
+	public Box(double maxLatitude, double maxLongitude, double minLatitude, double minLongitude, int zoom) throws InvalidParameterException {
 		maxCoords = new Coordinates(maxLatitude, maxLongitude);
 		minCoords = new Coordinates(minLatitude, minLongitude);
 		this.zoom = Math.abs(zoom);

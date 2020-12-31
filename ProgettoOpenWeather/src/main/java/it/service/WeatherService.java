@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import it.configuration.Configuration;
 import it.configuration.ErrorManager;
 import it.exception.DataNotFoundException;
-import it.exception.InvalidParametersException;
+import it.exception.InvalidParameterException;
 import it.exception.WebServiceException;
 import it.model.Box;
 import it.model.City;
@@ -30,7 +30,7 @@ public class WeatherService {
 		} catch (IOException e) {
 			switch(dataDownloader.getHttpsStatus()) {
 				case 400:
-					Exception e400 = new InvalidParametersException();
+					Exception e400 = new InvalidParameterException();
 					return new ErrorManager(e400, "");
 				case 401:
 					Exception e401 = new WebServiceException();
@@ -60,7 +60,7 @@ public class WeatherService {
 		try {
 			return new City(name, dataDownloader.getCoordinates(-1), dataDownloader.getMain(-1));
 				
-		} catch (InvalidParametersException e) {
+		} catch (InvalidParameterException e) {
 			return new ErrorManager(e, "Latitude can only have values between -90 and +90. "
 					+ "Longitude can only have values between -180 and +180");
 		}	
@@ -78,10 +78,10 @@ public class WeatherService {
 				errorLon = errorLat;
 				break;
 			case 0:
-				Exception exception = new InvalidParametersException();
+				Exception exception = new InvalidParameterException();
 				return new ErrorManager(exception, "Invalid parameters: all parameters are missing");
 			default:
-				Exception exception1 = new InvalidParametersException();
+				Exception exception1 = new InvalidParameterException();
 				return new ErrorManager(exception1, "Invalid parameters: only 2 parameters are needed");
 		}
 		
@@ -91,7 +91,7 @@ public class WeatherService {
 		} catch (IOException e) {
 			switch(dataDownloader.getHttpsStatus()) {
 				case 400:
-					Exception e400 = new InvalidParametersException();
+					Exception e400 = new InvalidParameterException();
 					return new ErrorManager(e400, "");
 				case 401:
 					Exception e401 = new WebServiceException();
@@ -126,7 +126,7 @@ public class WeatherService {
 			Coordinates minCoords = new Coordinates(latitude-Math.abs(errorLat), longitude-Math.abs(errorLon));
 			weatherBox = new Box(maxCoords, minCoords);
 			
-		} catch(InvalidParametersException e) {
+		} catch(InvalidParameterException e) {
 			return new ErrorManager(e, "Latitude can only have values between -90 and +90. "
 					+ "Longitude can only have values between -180 and +180");
 		}
@@ -153,10 +153,10 @@ public class WeatherService {
 				zoom   = Configuration.getDefaultZoom();
 				break;
 			case 0:
-				Exception exception = new InvalidParametersException();
+				Exception exception = new InvalidParameterException();
 				return new ErrorManager(exception, "Invalid parameters: all parameters are missing");
 			default:
-				Exception exception1 = new InvalidParametersException();
+				Exception exception1 = new InvalidParameterException();
 				return new ErrorManager(exception1, "Invalid parameters: incorrect number of parameters");
 		}
 		
@@ -164,7 +164,7 @@ public class WeatherService {
 		try {
 			weatherBox = new Box(maxLat, maxLon, minLat, minLon, (int)zoom);
 			
-		} catch (InvalidParametersException e) {
+		} catch (InvalidParameterException e) {
 			return new ErrorManager(e, "Latitude can only have values between -90 and +90. "
 					+ "Longitude can only have values between -180 and +180");
 		}
@@ -182,7 +182,7 @@ public class WeatherService {
 		} catch (IOException e) {
 			switch(dataDownloader.getHttpsStatus()) {
 				case 400:
-					Exception e400 = new InvalidParametersException();
+					Exception e400 = new InvalidParameterException();
 					return new ErrorManager(e400, "Invalid parameters: the requested area is too wide");
 				case 401:
 					Exception e401 = new WebServiceException();
@@ -227,7 +227,7 @@ public class WeatherService {
 				cityList.add(new City(dataDownloader.getName(i), dataDownloader.getCoordinates(i), dataDownloader.getMain(i)));
 			return cityList; 
 					
-		} catch (InvalidParametersException e) {
+		} catch (InvalidParameterException e) {
 			return new ErrorManager(e, "Latitude can only have values between -90 and +90. "
 					+ "Longitude can only have values between -180 and +180");
 		}
