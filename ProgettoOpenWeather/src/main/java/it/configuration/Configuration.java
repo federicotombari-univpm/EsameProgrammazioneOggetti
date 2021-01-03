@@ -2,6 +2,7 @@ package it.configuration;
 
 import java.util.Vector;
 
+
 public class Configuration {
 
 	// costruttore, attributi, metodi sono da completare e rifinire
@@ -52,6 +53,14 @@ public class Configuration {
 	
 	public static void setDefaultZoom(int defaultZoom) {
 		Configuration.defaultZoom = defaultZoom;
+	}
+	
+	public static Vector<String> getDefaultCityList() {
+		return defaultCityList;
+	}
+
+	public static void setDefaultCityList(Vector<String> defaultCityList) {
+		Configuration.defaultCityList = defaultCityList;
 	}
 	
 }
