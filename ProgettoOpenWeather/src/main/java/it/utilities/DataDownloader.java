@@ -13,7 +13,9 @@ import org.json.simple.parser.ParseException;
 
 import it.exception.DataNotFoundException;
 import it.exception.InvalidParameterException;
+
 import it.model.Coordinates;
+import it.model.ExtendedWeather;
 import it.model.Weather;
 
 import org.json.simple.JSONArray;
@@ -55,7 +57,7 @@ public class DataDownloader {
 	}
 		
 	
-	public Weather getMain(int i) {
+	public Weather getMain(int i, boolean extended) {
 		JSONObject main = null;
 		if (i == -1) {
 			main = (JSONObject) rispAPI.get("main");
@@ -71,9 +73,14 @@ public class DataDownloader {
 		double temperature = (double)main.get("temp");
 		  
 		double visibility = this.getVisibility(i);
-		String general = this.getGeneralWeather(i);
-
-		Weather weather = new Weather(general, pressure, humidity, temperature, visibility);
+		
+		Weather weather;
+		if (extended) {
+			String general = this.getGeneralWeather(i);
+			weather = new ExtendedWeather(pressure, humidity, temperature, visibility, general);
+		} else {
+			weather = new Weather(pressure, humidity, temperature, visibility);
+		}
 		return weather;
 			
 	}

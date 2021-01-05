@@ -58,7 +58,7 @@ public class WeatherService {
 		}
 		
 		try {
-			return new City(name, dataDownloader.getCoordinates(-1), dataDownloader.getMain(-1));
+			return new City(name, dataDownloader.getCoordinates(-1), dataDownloader.getMain(-1, true));
 				
 		} catch (InvalidParameterException e) {
 			return new ErrorManager(e, "Latitude can only have values between -90 and +90. "
@@ -224,7 +224,7 @@ public class WeatherService {
 		try {
 			Vector<City> cityList = new Vector<City>();
 			for(int i = 0; i < dataDownloader.getCnt(); i++)
-				cityList.add(new City(dataDownloader.getName(i), dataDownloader.getCoordinates(i), dataDownloader.getMain(i)));
+				cityList.add(new City(dataDownloader.getName(i), dataDownloader.getCoordinates(i), dataDownloader.getMain(i, true)));
 			return cityList; 
 					
 		} catch (InvalidParameterException e) {

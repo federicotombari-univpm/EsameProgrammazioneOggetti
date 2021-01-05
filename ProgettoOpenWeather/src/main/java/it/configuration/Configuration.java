@@ -1,5 +1,6 @@
 package it.configuration;
 
+import java.text.SimpleDateFormat;
 import java.util.Vector;
 
 
@@ -14,6 +15,9 @@ public class Configuration {
 	private static String databaseFilename = "database.json";
 	private static int defaultZoom = 10;
 	private static Vector<String> defaultCityList = null;
+	
+
+	private static final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 	
 	public static String getApiKey() {
 		return apiKey;
@@ -61,6 +65,10 @@ public class Configuration {
 
 	public static void setDefaultCityList(Vector<String> defaultCityList) {
 		Configuration.defaultCityList = defaultCityList;
+	}
+
+	public static SimpleDateFormat getFormatter() {
+		return formatter;
 	}
 	
 }

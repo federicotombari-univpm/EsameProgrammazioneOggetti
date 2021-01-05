@@ -32,7 +32,7 @@ public class ErrorManager {
 		
 		else if(e instanceof ParseException) {
 			errorId = 302;
-			this.message = "An error occurred while parsing the data";
+			this.message = "An error occurred while getting the data";
 		}
 		
 		else if(e instanceof ClassCastException || e instanceof NullPointerException) {

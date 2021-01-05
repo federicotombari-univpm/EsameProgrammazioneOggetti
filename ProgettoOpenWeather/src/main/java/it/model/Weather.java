@@ -2,26 +2,16 @@ package it.model;
 
 public class Weather {
 
-	private String general;
-	private double pressure;
-	private double humidity;
-	private double temperature;
-	private double visibility;
+	protected double pressure;
+	protected double humidity;
+	protected double temperature;
+	protected double visibility;
 	
-	public Weather(String general, double pressure, double humidity, double temperature, double visibility) {
-		this.general = general;
+	public Weather(double pressure, double humidity, double temperature, double visibility) {
 		this.pressure = pressure;
 		this.humidity = humidity;
 		this.temperature = temperature;
 		this.visibility = visibility;
-	}
-
-	public String getGeneral() {
-		return general;
-	}
-
-	public void setGeneral(String general) {
-		this.general = general;
 	}
 	
 	public double getPressure() {
