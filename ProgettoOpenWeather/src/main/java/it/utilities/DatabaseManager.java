@@ -16,7 +16,6 @@ import it.exception.DataNotFoundException;
 import it.exception.InvalidParameterException;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
@@ -28,42 +27,36 @@ public class DatabaseManager {
 	
 	private ArrayList<JSONObject> downloadedData = null;
 	private JSONArray loadedData = null;
-	private Vector<String>UrlMultyCall = null;
+	private Vector<String>UrlMultiCall = null;
 	
 	
-	DataDownloader DD = new DataDownloader ();
+	DataDownloader DD = new DataDownloader();
 	
 	public void insertElement(JSONObject elemento) {
 		this.downloadedData.add(elemento);
 	}
 	
-	public Date getDateAndTime () {
-		Date date = new Date();
-		Configuration.getFormatter().format(date);
-		return date;
-	}
-	
-	public Vector<String> updateURLMultyCall() {
-		UrlMultyCall = new Vector<String>();
+	public Vector<String> updateURLMultiCall() {
+		UrlMultiCall = new Vector<String>();
 		
 		for(int i=0; i<Configuration.getDefaultCityList().size(); i++) {
 			String url = ("https://api.openweathermap.org/data/2.5/weather?q="+(Configuration.getDefaultCityList()).get(i)+"&appid="+Configuration.getApiKey());
-			UrlMultyCall.add(url);
+			UrlMultiCall.add(url);
 		}
 		
-		return UrlMultyCall;
+		return UrlMultiCall;
 	}
 	
 	
 	public void createElement() throws InvalidParameterException, ClassCastException, IOException, ParseException, DataNotFoundException { 
 		
 		Map<String,Object> mainObj = new HashMap<String,Object>();
-		mainObj.put("timestamp", getDateAndTime());
+		mainObj.put("timestamp", Utilities.getCurrentDate());
 		
 		ArrayList<JSONObject> array = new ArrayList<JSONObject>();
 
-		for(int i=0; i<UrlMultyCall.size(); i++) {
-			DD.chiamataAPI((UrlMultyCall).get(i));	
+		for(int i=0; i<UrlMultiCall.size(); i++) {
+			DD.chiamataAPI((UrlMultiCall).get(i));	
 			
 			Map<String,Object> minorObj = new HashMap<String,Object>();
 			minorObj.put("name",    DD.getName(-1));
@@ -89,7 +82,7 @@ public class DatabaseManager {
 	}
 	
 	public void loadDatabase() throws ParseException, FileNotFoundException, IOException { 
-		setLoadedData(new JSONArray());
+		loadedData = new JSONArray();
 		JSONParser parser = new JSONParser();
 		
 		BufferedReader file_input = new BufferedReader(new FileReader(Configuration.getDatabaseFilename()));
@@ -105,10 +98,9 @@ public class DatabaseManager {
 			private static final long serialVersionUID = 1L;
 		};
 		
-		this.updateURLMultyCall();
+		this.updateURLMultiCall();
 		this.createElement();
 		this.saveDatabase();
-		
 	}
 
 	public JSONArray getLoadedData() {
