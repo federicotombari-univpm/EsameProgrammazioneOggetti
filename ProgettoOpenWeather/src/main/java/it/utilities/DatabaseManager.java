@@ -14,6 +14,7 @@ import java.io.FileWriter;
 
 import it.exception.DataNotFoundException;
 import it.exception.InvalidParameterException;
+import it.exception.WebServiceException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,15 +26,16 @@ import it.configuration.Configuration;
 
 public class DatabaseManager {
 	
-	private ArrayList<JSONObject> downloadedData = null;
+	private ArrayList<JSONObject> localData = null;
 	private JSONArray loadedData = null;
-	private Vector<String>UrlMultiCall = null;
+	private Vector<String> UrlMultiCall = null;
+	private boolean updating = false;
 	
 	
 	DataDownloader DD = new DataDownloader();
 	
 	public void insertElement(JSONObject elemento) {
-		this.downloadedData.add(elemento);
+		this.localData.add(elemento);
 	}
 	
 	public Vector<String> updateURLMultiCall() {
@@ -56,14 +58,13 @@ public class DatabaseManager {
 		ArrayList<JSONObject> array = new ArrayList<JSONObject>();
 
 		for(int i=0; i<UrlMultiCall.size(); i++) {
-			DD.chiamataAPI((UrlMultiCall).get(i));	
+			DD.chiamataAPI((UrlMultiCall).get(i));
 			
 			Map<String,Object> minorObj = new HashMap<String,Object>();
 			minorObj.put("name",    DD.getName(-1));
 			minorObj.put("weather", DD.getMain(-1, false));
 			
 			array.add((JSONObject) minorObj);
-			
 		}
 		
 		mainObj.put("list", (JSONArray) array);
@@ -73,7 +74,7 @@ public class DatabaseManager {
 	public void saveDatabase() { 
 		try {
 			BufferedWriter file_output = new BufferedWriter(new FileWriter(Configuration.getDatabaseFilename(), true));
-			file_output.write(((JSONArray) this.downloadedData).toJSONString());
+			file_output.write(((JSONArray) this.localData).toJSONString());
 			file_output.close();
 			
 		} catch (IOException e) {
@@ -81,7 +82,10 @@ public class DatabaseManager {
 		}
 	}
 	
-	public void loadDatabase() throws ParseException, FileNotFoundException, IOException { 
+	public void loadDatabase(boolean serviceRequest) throws ParseException, FileNotFoundException, IOException, WebServiceException { 
+		if (serviceRequest && updating)
+				throw new WebServiceException();
+			
 		loadedData = new JSONArray();
 		JSONParser parser = new JSONParser();
 		
@@ -92,12 +96,19 @@ public class DatabaseManager {
 		file_input.close();
 	}
 	
-	public void updateDatabase() throws ClassCastException, InvalidParameterException, IOException, ParseException, DataNotFoundException { 
-		downloadedData = new ArrayList<JSONObject>() {
+	public void updateDatabase() throws ClassCastException, InvalidParameterException, IOException, ParseException, DataNotFoundException, WebServiceException { 
+		localData = new ArrayList<JSONObject>() {
 			// auto-generated
 			private static final long serialVersionUID = 1L;
 		};
 		
+		updating = true;
+		this.loadDatabase(false);
+		
+		for(int i=0; i<loadedData.size(); i++)
+			this.insertElement((JSONObject) loadedData.get(i));
+		
+		updating = false;
 		this.updateURLMultiCall();
 		this.createElement();
 		this.saveDatabase();

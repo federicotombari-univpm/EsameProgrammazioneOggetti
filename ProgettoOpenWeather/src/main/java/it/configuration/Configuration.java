@@ -14,12 +14,12 @@ public class Configuration {
 	private static String configurationFilename = "config.json";
 	private static String databaseFilename = "database.json";
 	private static int defaultZoom = 10;
-	private static String defaultDate = "2020-01-01";
+	private static String defaultDate = "2021-01-01";
 	private static Vector<String> defaultCityList = null;
 	
-
 	private static final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 	
+	// getter e setter
 	public static String getApiKey() {
 		return apiKey;
 	}
