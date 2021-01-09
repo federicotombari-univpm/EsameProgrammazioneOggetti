@@ -51,9 +51,9 @@ public class DataDownloader {
 			
 		} catch (ClassCastException e) {
 			throw new DataNotFoundException();
+		} finally {
+			in.close();
 		}
-		
-		in.close();
 	}
 		
 	

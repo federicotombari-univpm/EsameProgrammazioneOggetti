@@ -14,29 +14,21 @@ import java.io.FileWriter;
 
 import it.exception.DataNotFoundException;
 import it.exception.InvalidParameterException;
-import it.exception.WebServiceException;
+import it.model.Weather;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 import it.configuration.Configuration;
+import it.configuration.ErrorManager;
 
-
-public class DatabaseManager {
+@SuppressWarnings("unchecked")
+public class DatabaseManager{ // TimerTask implementa Runnable, l'interfaccia dei Thread
 	
-	private ArrayList<JSONObject> localData = null;
+	private JSONArray localData = null;
 	private JSONArray loadedData = null;
 	private Vector<String> UrlMultiCall = null;
-	private boolean updating = false;
-	
-	
+
 	DataDownloader DD = new DataDownloader();
-	
-	public void insertElement(JSONObject elemento) {
-		this.localData.add(elemento);
-	}
 	
 	public Vector<String> updateURLMultiCall() {
 		UrlMultiCall = new Vector<String>();
@@ -49,43 +41,45 @@ public class DatabaseManager {
 		return UrlMultiCall;
 	}
 	
-	
-	public void createElement() throws InvalidParameterException, ClassCastException, IOException, ParseException, DataNotFoundException { 
+	public void createElement() throws ClassCastException, IOException, ParseException, DataNotFoundException { 
 		
-		Map<String,Object> mainObj = new HashMap<String,Object>();
-		mainObj.put("timestamp", Utilities.getCurrentDate());
+		JSONObject mainObj = new JSONObject();
+		mainObj.put("timestamp", Utilities.getCurrentDateToString(true));
 		
-		ArrayList<JSONObject> array = new ArrayList<JSONObject>();
+		JSONArray array = new JSONArray();
 
 		for(int i=0; i<UrlMultiCall.size(); i++) {
 			DD.chiamataAPI((UrlMultiCall).get(i));
 			
-			Map<String,Object> minorObj = new HashMap<String,Object>();
-			minorObj.put("name",    DD.getName(-1));
-			minorObj.put("weather", DD.getMain(-1, false));
+			JSONObject minorObj = new JSONObject();
+			minorObj.put("name", DD.getName(-1));
 			
-			array.add((JSONObject) minorObj);
+			Weather weatherObject = DD.getMain(-1, false);
+			JSONObject weather = new JSONObject();
+			weather.put("pressure", weatherObject.getPressure());
+			weather.put("humidity", weatherObject.getHumidity());
+			weather.put("temperature", weatherObject.getTemperature());
+			weather.put("visibility", weatherObject.getVisibility());
+			
+			minorObj.put("weather", weather);
+			
+			array.add(minorObj);
 		}
 		
-		mainObj.put("list", (JSONArray) array);
-		this.insertElement((JSONObject) mainObj);
+		mainObj.put("list", array);
+		this.insertElement(mainObj);
 	}
 	
-	public void saveDatabase() { 
-		try {
-			BufferedWriter file_output = new BufferedWriter(new FileWriter(Configuration.getDatabaseFilename(), true));
-			file_output.write(((JSONArray) this.localData).toJSONString());
-			file_output.close();
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void insertElement(JSONObject elemento) {
+		this.localData.add(elemento);
 	}
 	
-	public void loadDatabase(boolean serviceRequest) throws ParseException, FileNotFoundException, IOException, WebServiceException { 
-		if (serviceRequest && updating)
-				throw new WebServiceException();
-			
+	public void saveDatabase() throws IOException { 
+		BufferedWriter file_output = new BufferedWriter(new FileWriter(Configuration.getDatabaseFilename(), false));
+		file_output.write(((JSONArray) this.localData).toJSONString());	
+	}
+	
+	public void loadDatabase() throws ParseException, FileNotFoundException, IOException { 	
 		loadedData = new JSONArray();
 		JSONParser parser = new JSONParser();
 		
@@ -96,19 +90,14 @@ public class DatabaseManager {
 		file_input.close();
 	}
 	
-	public void updateDatabase() throws ClassCastException, InvalidParameterException, IOException, ParseException, DataNotFoundException, WebServiceException { 
-		localData = new ArrayList<JSONObject>() {
-			// auto-generated
-			private static final long serialVersionUID = 1L;
-		};
+	public void updateDatabase() throws ClassCastException, IOException, ParseException, DataNotFoundException { 
+		localData = new JSONArray();
 		
-		updating = true;
-		this.loadDatabase(false);
+		this.loadDatabase();
 		
 		for(int i=0; i<loadedData.size(); i++)
 			this.insertElement((JSONObject) loadedData.get(i));
 		
-		updating = false;
 		this.updateURLMultiCall();
 		this.createElement();
 		this.saveDatabase();

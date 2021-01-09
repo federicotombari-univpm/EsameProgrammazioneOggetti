@@ -31,30 +31,30 @@ public class WeatherService {
 			switch(dataDownloader.getHttpsStatus()) {
 				case 400:
 					Exception e400 = new InvalidParameterException();
-					return new ErrorManager(e400, "");
+					return new ErrorManager(e400, "", false);
 				case 401:
 					Exception e401 = new WebServiceException();
-					return new ErrorManager(e401, "Requested data is unavailable, try a different request");
+					return new ErrorManager(e401, "Requested data is unavailable, try a different request", false);
 				case 404:
 					Exception e404 = new DataNotFoundException();
-					return new ErrorManager(e404, "Web server returned no data, city name might be invalid");
+					return new ErrorManager(e404, "Web server returned no data, city name might be invalid", false);
 				case 429:
 					Exception e429 = new WebServiceException();
-					return new ErrorManager(e429, "Web server is overloaded, please try again later");
+					return new ErrorManager(e429, "Web server is overloaded, please try again later", false);
 				case -1:
-					return new ErrorManager(e, "");
+					return new ErrorManager(e, "", true);
 				default:			
 					Exception exception = new WebServiceException();
-					return new ErrorManager(exception, "");
+					return new ErrorManager(exception, "", false);
 			}
 		} catch (ParseException e2) {
-			return new ErrorManager(e2, "");
+			return new ErrorManager(e2, "", true);
 			
 		} catch (DataNotFoundException e3) {
-			return new ErrorManager(e3, "Web server returned no data, city name might be invalid");
+			return new ErrorManager(e3, "Web server returned no data, city name might be invalid", false);
 			
 		} catch (Exception generalException) {
-			return new ErrorManager(generalException, "");
+			return new ErrorManager(generalException, "", false);
 		}
 		
 		try {
@@ -62,7 +62,7 @@ public class WeatherService {
 				
 		} catch (InvalidParameterException e) {
 			return new ErrorManager(e, "Latitude can only have values between -90 and +90. "
-					+ "Longitude can only have values between -180 and +180");
+					+ "Longitude can only have values between -180 and +180", false);
 		}	
 	}
 
@@ -79,10 +79,10 @@ public class WeatherService {
 				break;
 			case 0:
 				Exception exception = new InvalidParameterException();
-				return new ErrorManager(exception, "Invalid parameters: all parameters are missing");
+				return new ErrorManager(exception, "Invalid parameters: all parameters are missing", false);
 			default:
 				Exception exception1 = new InvalidParameterException();
-				return new ErrorManager(exception1, "Invalid parameters: only 2 parameters are needed");
+				return new ErrorManager(exception1, "Invalid parameters: only 2 parameters are needed", false);
 		}
 		
 		try {
@@ -92,30 +92,30 @@ public class WeatherService {
 			switch(dataDownloader.getHttpsStatus()) {
 				case 400:
 					Exception e400 = new InvalidParameterException();
-					return new ErrorManager(e400, "");
+					return new ErrorManager(e400, "", false);
 				case 401:
 					Exception e401 = new WebServiceException();
-					return new ErrorManager(e401, "Requested data is unavailable, try a different request");
+					return new ErrorManager(e401, "Requested data is unavailable, try a different request", false);
 				case 404:
 					Exception e404 = new DataNotFoundException();
-					return new ErrorManager(e404, "Web server returned no data, city name might be invalid");
+					return new ErrorManager(e404, "Web server returned no data, city name might be invalid", false);
 				case 429:
 					Exception e429 = new WebServiceException();
-					return new ErrorManager(e429, "Web server is overloaded, please try again later");
+					return new ErrorManager(e429, "Web server is overloaded, please try again later", false);
 				case -1:
-					return new ErrorManager(e, "");
+					return new ErrorManager(e, "", true);
 				default:			
 					Exception exception = new WebServiceException();
-					return new ErrorManager(exception, "");
+					return new ErrorManager(exception, "", false);
 			}
 		} catch (ParseException e2) {
-			return new ErrorManager(e2, "");
+			return new ErrorManager(e2, "", true);
 			
 		} catch (DataNotFoundException e3) {
-			return new ErrorManager(e3, "Web server returned no data, city name might be invalid");
+			return new ErrorManager(e3, "Web server returned no data, city name might be invalid", false);
 			
 		} catch (Exception generalException) {
-			return new ErrorManager(generalException, "");
+			return new ErrorManager(generalException, "", true);
 		}
 		
 		Box weatherBox = null;
@@ -128,7 +128,7 @@ public class WeatherService {
 			
 		} catch(InvalidParameterException e) {
 			return new ErrorManager(e, "Latitude can only have values between -90 and +90. "
-					+ "Longitude can only have values between -180 and +180");
+					+ "Longitude can only have values between -180 and +180", false);
 		}
 		
 		return this.getBoxData(weatherBox.getMinCoords().getLatitude(), weatherBox.getMinCoords().getLongitude(),
@@ -154,10 +154,10 @@ public class WeatherService {
 				break;
 			case 0:
 				Exception exception = new InvalidParameterException();
-				return new ErrorManager(exception, "Invalid parameters: all parameters are missing");
+				return new ErrorManager(exception, "Invalid parameters: all parameters are missing", false);
 			default:
 				Exception exception1 = new InvalidParameterException();
-				return new ErrorManager(exception1, "Invalid parameters: incorrect number of parameters");
+				return new ErrorManager(exception1, "Invalid parameters: incorrect number of parameters", false);
 		}
 		
 		Box weatherBox = null;
@@ -166,7 +166,7 @@ public class WeatherService {
 			
 		} catch (InvalidParameterException e) {
 			return new ErrorManager(e, "Latitude can only have values between -90 and +90. "
-					+ "Longitude can only have values between -180 and +180");
+					+ "Longitude can only have values between -180 and +180", false);
 		}
 		
 		return this.getBoxData(weatherBox.getMinCoords().getLatitude(), weatherBox.getMinCoords().getLongitude(),
@@ -183,42 +183,42 @@ public class WeatherService {
 			switch(dataDownloader.getHttpsStatus()) {
 				case 400:
 					Exception e400 = new InvalidParameterException();
-					return new ErrorManager(e400, "Invalid parameters: the requested area is too wide");
+					return new ErrorManager(e400, "Invalid parameters: the requested area is too wide", false);
 				case 401:
 					Exception e401 = new WebServiceException();
-					return new ErrorManager(e401, "Requested data is unavailable, try a different request");
+					return new ErrorManager(e401, "Requested data is unavailable, try a different request", false);
 				case 404:
 					Exception e404 = new DataNotFoundException();
 					if (minLat == maxLat)
-						return new ErrorManager(e404, "No data available: min and max latitude have the same value");
+						return new ErrorManager(e404, "No data available: min and max latitude have the same value", false);
 					else if (minLon == maxLon)
-						return new ErrorManager(e404, "No data available: min and max longitude have the same value");
+						return new ErrorManager(e404, "No data available: min and max longitude have the same value", false);
 					else if (zoom < 5)
-						return new ErrorManager(e404, "No data available, choose a greater value for 'zoom'");
-					else return new ErrorManager(e404, "");
+						return new ErrorManager(e404, "No data available, choose a greater value for 'zoom'", false);
+					else return new ErrorManager(e404, "", false);
 				case 429:
 					Exception e429 = new WebServiceException();
-					return new ErrorManager(e429, "Web server is overloaded, please try again later");
+					return new ErrorManager(e429, "Web server is overloaded, please try again later", false);
 				case -1:
-					return new ErrorManager(e, "");
+					return new ErrorManager(e, "", true);
 				default:			
 					Exception exception = new WebServiceException();
-					return new ErrorManager(exception, "");
+					return new ErrorManager(exception, "", false);
 			}
 		} catch (ParseException e2) {
-			return new ErrorManager(e2, "");
+			return new ErrorManager(e2, "", true);
 			
 		} catch (DataNotFoundException e3) {
 			if (minLat == maxLat)
-				return new ErrorManager(e3, "No data available: min and max latitude have the same value");
+				return new ErrorManager(e3, "No data available: min and max latitude have the same value", false);
 			else if (minLon == maxLon)
-				return new ErrorManager(e3, "No data available: min and max longitude have the same value");
+				return new ErrorManager(e3, "No data available: min and max longitude have the same value", false);
 			else if (zoom < 5)
-				return new ErrorManager(e3, "No data available, choose a greater value for 'zoom'");
-			else return new ErrorManager(e3, "");
+				return new ErrorManager(e3, "No data available, choose a greater value for 'zoom'", false);
+			else return new ErrorManager(e3, "", false);
 			
 		} catch (Exception generalException) {
-			return new ErrorManager(generalException, "");
+			return new ErrorManager(generalException, "", true);
 		}
 		
 		try {
@@ -229,7 +229,7 @@ public class WeatherService {
 					
 		} catch (InvalidParameterException e) {
 			return new ErrorManager(e, "Latitude can only have values between -90 and +90. "
-					+ "Longitude can only have values between -180 and +180");
+					+ "Longitude can only have values between -180 and +180", false);
 		}
 	
 	}
