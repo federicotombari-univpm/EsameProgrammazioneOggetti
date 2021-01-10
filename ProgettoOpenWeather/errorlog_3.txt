@@ -1,0 +1,39 @@
+-- Error Log 3 --
+Timestamp: 2021-01-10_19:21:34
+
+(1) Error Management
+- Error Info -
+Error Id:      303
+Error Type:    java.lang.ClassCastException: class java.lang.Double cannot be cast to class java.lang.Long (java.lang.Double and java.lang.Long are in module java.base of loader 'bootstrap')
+Error Message: An internal error occurred while updating the database
+
+- Exception StackTrace -
+java.lang.ClassCastException: class java.lang.Double cannot be cast to class java.lang.Long (java.lang.Double and java.lang.Long are in module java.base of loader 'bootstrap')
+	at it.utilities.DataDownloader.getMain(DataDownloader.java:74)
+	at it.utilities.DatabaseManager.createAndAddElements(DatabaseManager.java:43)
+	at it.utilities.DatabaseManager.updateDatabase(DatabaseManager.java:99)
+	at it.utilities.ThreadManager.run(ThreadManager.java:53)
+	at java.base/java.util.TimerThread.mainLoop(Timer.java:556)
+	at java.base/java.util.TimerThread.run(Timer.java:506)
+
+
+(2) Configuration Settings
+- Main Settings -
+Api Key:            56989104be7410276956586c1fb09bf6
+Measurement System: metric
+Default City:       Ancona
+Default Date:       2021-01-01
+Default Zoom:       10
+
+- Timer settings - 
+Initial Thread Delay:  0 seconds
+Standard Thread Delay: 7200 seconds
+Running status:        true
+
+- File Settings -
+Config Filename:   config.json
+Database Filename: database.json
+
+- Default City List - 
+Size: 10
+List: Ancona; Pesaro; Fano; San Benedetto Del Tronto; Ascoli Piceno; Senigallia; Civitanova Marche; Macerata; Jesi; Fermo; 

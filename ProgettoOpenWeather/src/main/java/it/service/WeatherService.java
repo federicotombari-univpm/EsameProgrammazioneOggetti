@@ -25,7 +25,7 @@ public class WeatherService {
 	public Object getByCityName(String name) { // caso "città singola"
 		
 		try {
-			dataDownloader.chiamataAPI("https://api.openweathermap.org/data/2.5/weather?q="+name+"&appid="+Configuration.getApiKey());
+			dataDownloader.chiamataAPI("https://api.openweathermap.org/data/2.5/weather?q="+name);
 			
 		} catch (IOException e) {
 			switch(dataDownloader.getHttpsStatus()) {
@@ -86,7 +86,7 @@ public class WeatherService {
 		}
 		
 		try {
-			dataDownloader.chiamataAPI("https://api.openweathermap.org/data/2.5/weather?q="+name+"&appid="+Configuration.getApiKey());
+			dataDownloader.chiamataAPI("https://api.openweathermap.org/data/2.5/weather?q="+name);
 			
 		} catch (IOException e) {
 			switch(dataDownloader.getHttpsStatus()) {
@@ -177,7 +177,7 @@ public class WeatherService {
 		
 		try {
 			dataDownloader.chiamataAPI("https://api.openweathermap.org/data/2.5/box/city?bbox="
-					+minLat+","+minLon+","+maxLat+","+maxLon+","+zoom+"&appid="+Configuration.getApiKey());
+					+minLat+","+minLon+","+maxLat+","+maxLon+","+zoom);
 			
 		} catch (IOException e) {
 			switch(dataDownloader.getHttpsStatus()) {

@@ -1,17 +1,21 @@
 package it.utilities;
 
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.json.simple.parser.ParseException;
+
 import it.configuration.Configuration;
 import it.configuration.ErrorManager;
+import it.exception.DataNotFoundException;
 
 public class ThreadManager extends TimerTask {
 
 	DatabaseManager DM = null;
 	Timer timer = null;
 	
-	boolean running = false;
+	private static boolean running = false;
 	
 	// costruttore
 	public ThreadManager() {
@@ -20,10 +24,10 @@ public class ThreadManager extends TimerTask {
 	}
 	
 	// metodi
-	public void startThread(boolean forced) {
+	public void startThread(boolean forced) throws IllegalArgumentException {
 		if(!running) {
 			timer = new Timer();
-			timer.schedule(this, 0, Configuration.getDefaultThreadDelay()*1000);
+			timer.schedule(this, Configuration.getDefaultInitialThreadDelay()*1000, Configuration.getDefaultThreadDelay()*1000);
 			running = true;
 		} else if (forced) {
 			this.cancel();
@@ -38,15 +42,23 @@ public class ThreadManager extends TimerTask {
 		}
 	}
 	
-	public boolean isRunning() {
+	public static boolean isRunning() {
 		return running;
 	}
 
 	@Override
 	public void run() {
+		
 		try {
 			DM.updateDatabase();
-		} catch (Exception e) {
-			new ErrorManager(e, "An error occurred while updating the database", true);		}
+			
+		} catch (DataNotFoundException e) {
+			new ErrorManager(e, "Web server returned no data", true);
+		} catch (IOException e) {
+			new ErrorManager(e, "An input/output error occurred while updating the database", true);
+		} catch (ParseException | ClassCastException e) {
+			new ErrorManager(e, "An internal error occurred while updating the database", true);
+		} 
 	}
+	
 }

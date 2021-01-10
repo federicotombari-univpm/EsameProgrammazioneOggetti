@@ -1,0 +1,22 @@
+{
+	"apikey": "56989104be7410276956586c1fb09bf6",
+	"city": "Ancona",
+	"datestamp": "2021-01-01",
+	"database": "database.json",
+	"unit": "metric",
+	"zoom": 10,
+	"delay": 7200,
+	"initialdelay": 0,
+	"citylist": [
+		"Ancona",
+		"Pesaro",
+		"Fano",
+		"San Benedetto Del Tronto",
+		"Ascoli Piceno",
+		"Senigallia",
+		"Civitanova Marche",
+		"Macerata",
+		"Jesi",
+		"Fermo"
+	]
+}

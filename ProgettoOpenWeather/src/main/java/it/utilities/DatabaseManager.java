@@ -13,10 +13,7 @@ import java.io.IOException;
 import java.io.FileWriter;
 
 import it.exception.DataNotFoundException;
-import it.exception.InvalidParameterException;
 import it.model.Weather;
-
-import java.util.Vector;
 
 import it.configuration.Configuration;
 import it.configuration.ErrorManager;
@@ -26,33 +23,22 @@ public class DatabaseManager{ // TimerTask implementa Runnable, l'interfaccia de
 	
 	private JSONArray localData = null;
 	private JSONArray loadedData = null;
-	private Vector<String> UrlMultiCall = null;
 
 	DataDownloader DD = new DataDownloader();
 	
-	public Vector<String> updateURLMultiCall() {
-		UrlMultiCall = new Vector<String>();
-		
-		for(int i=0; i<Configuration.getDefaultCityList().size(); i++) {
-			String url = ("https://api.openweathermap.org/data/2.5/weather?q="+(Configuration.getDefaultCityList()).get(i)+"&appid="+Configuration.getApiKey());
-			UrlMultiCall.add(url);
-		}
-		
-		return UrlMultiCall;
-	}
-	
-	public void createElement() throws ClassCastException, IOException, ParseException, DataNotFoundException { 
+	public void createAndAddElements() throws ClassCastException, IOException, ParseException, DataNotFoundException { 
 		
 		JSONObject mainObj = new JSONObject();
 		mainObj.put("timestamp", Utilities.getCurrentDateToString(true));
 		
 		JSONArray array = new JSONArray();
 
-		for(int i=0; i<UrlMultiCall.size(); i++) {
-			DD.chiamataAPI((UrlMultiCall).get(i));
+		for(int i=0; i<Configuration.getDefaultCityList().size(); i++) {
+			String url = ("https://api.openweathermap.org/data/2.5/weather?q="+(Configuration.getDefaultCityList()).get(i));
+			DD.chiamataAPI(url);
 			
 			JSONObject minorObj = new JSONObject();
-			minorObj.put("name", DD.getName(-1));
+			minorObj.put("name", Configuration.getDefaultCityList().get(i));
 			
 			Weather weatherObject = DD.getMain(-1, false);
 			JSONObject weather = new JSONObject();
@@ -75,8 +61,9 @@ public class DatabaseManager{ // TimerTask implementa Runnable, l'interfaccia de
 	}
 	
 	public void saveDatabase() throws IOException { 
-		BufferedWriter file_output = new BufferedWriter(new FileWriter(Configuration.getDatabaseFilename(), false));
-		file_output.write(((JSONArray) this.localData).toJSONString());	
+		BufferedWriter file_output = new BufferedWriter(new FileWriter(Configuration.getDatabaseFilename()));
+		file_output.write(localData.toJSONString());
+		file_output.close();
 	}
 	
 	public void loadDatabase() throws ParseException, FileNotFoundException, IOException { 	
@@ -84,23 +71,34 @@ public class DatabaseManager{ // TimerTask implementa Runnable, l'interfaccia de
 		JSONParser parser = new JSONParser();
 		
 		BufferedReader file_input = new BufferedReader(new FileReader(Configuration.getDatabaseFilename()));
-		Object obj = parser.parse(file_input);
-		setLoadedData((JSONArray) obj);
+		loadedData = (JSONArray) parser.parse(file_input);
 		
 		file_input.close();
 	}
 	
-	public void updateDatabase() throws ClassCastException, IOException, ParseException, DataNotFoundException { 
-		localData = new JSONArray();
-		
-		this.loadDatabase();
-		
+	public void copyDatabase() { 
 		for(int i=0; i<loadedData.size(); i++)
 			this.insertElement((JSONObject) loadedData.get(i));
+	}
+	
+	public void updateDatabase() throws ClassCastException, IOException, ParseException, DataNotFoundException  { 
+		localData = new JSONArray();
 		
-		this.updateURLMultiCall();
-		this.createElement();
-		this.saveDatabase();
+		try {
+			this.loadDatabase();
+			this.copyDatabase();
+			
+		} catch (FileNotFoundException e) {
+			new ErrorManager(e, "System failed to find '"+Configuration.getDatabaseFilename()+"'", true);
+		} catch (IOException e) {
+			new ErrorManager(e, "An input error occurred while loading '"+Configuration.getDatabaseFilename()+"'", true);	
+		} catch (ParseException e) {
+			new ErrorManager(e, "Parsing error while reading from '"+Configuration.getDatabaseFilename()+"'", true);
+			
+		} finally {
+			this.createAndAddElements();
+			this.saveDatabase();
+		}
 	}
 
 	public JSONArray getLoadedData() {

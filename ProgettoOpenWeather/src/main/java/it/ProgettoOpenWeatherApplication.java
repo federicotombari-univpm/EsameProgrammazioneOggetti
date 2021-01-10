@@ -18,9 +18,11 @@ public class ProgettoOpenWeatherApplication {
 		try {
 			Configuration.initializeConfig();
 			
-		} catch (IOException | ParseException | NullPointerException e) {
-			new ErrorManager(e, "An error occurred during initialization", true);
-			
+		} catch (IOException ioe) {
+			new ErrorManager(ioe, "An input/ooutput error occurred during initialization", true);
+		} catch (ParseException | NullPointerException | ClassCastException e) {
+			new ErrorManager(e, "An internal error occurred during initialization", true);
+
 		} finally {
 			ThreadManager threadManager = new ThreadManager();
 			threadManager.startThread(true);

@@ -12,6 +12,7 @@ import org.json.simple.parser.ParseException;
 import it.exception.DataNotFoundException;
 import it.exception.InvalidParameterException;
 import it.exception.WebServiceException;
+import it.utilities.ThreadManager;
 import it.utilities.Utilities;
 
 public class ErrorManager {
@@ -79,7 +80,7 @@ public class ErrorManager {
 	public void log(Exception e) {
 		try {
 			Configuration.increaseErrorLogCounter();
-			String filename = "errorlog_"+Configuration.getErrorLogCounter();
+			String filename = "errorlog_"+Configuration.getErrorLogCounter()+".txt";
 			PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename, false)));
 			
 			writer.println("-- Error Log "+Configuration.getErrorLogCounter()+" --");
@@ -101,20 +102,27 @@ public class ErrorManager {
 			
 			writer.println("(2) Configuration Settings");
 			writer.println("- Main Settings -");
-			writer.println("Api Key:              " +Configuration.getApiKey());
-			writer.println("Default City:         " +Configuration.getDefaultCity());
-			writer.println("Default Date:         " +Configuration.getDefaultDate());
-			writer.println("Config Filename:      " +Configuration.getConfigurationFilename());
-			writer.println("Database Filename:    " +Configuration.getDatabaseFilename());
-			writer.println("Default Zoom:         " +Configuration.getDefaultZoom());
-			writer.println("Default Thread Delay: " +Configuration.getDefaultThreadDelay()+" seconds");
+			writer.println("Api Key:            " +Configuration.getApiKey());
+			writer.println("Measurement System: " +Configuration.getDefaultTempUnit());
+			writer.println("Default City:       " +Configuration.getDefaultCity());
+			writer.println("Default Date:       " +Configuration.getDefaultDate());
+			writer.println("Default Zoom:       " +Configuration.getDefaultZoom());
+			writer.println();
+			writer.println("- Timer settings - ");
+			writer.println("Initial Thread Delay:  " +Configuration.getDefaultInitialThreadDelay()+" seconds");
+			writer.println("Standard Thread Delay: " +Configuration.getDefaultThreadDelay()+" seconds");
+			writer.println("Running status:        " +ThreadManager.isRunning());
+			writer.println();
+			writer.println("- File Settings -");
+			writer.println("Config Filename:   " +Configuration.getConfigurationFilename());
+			writer.println("Database Filename: " +Configuration.getDatabaseFilename());
 			writer.println();
 			writer.println("- Default City List - ");
 			if (Configuration.getDefaultCityList() == null) {
 				writer.println("Size: 0");
 				writer.println("List: -");
 			} else {
-				writer.println("Size:" +Configuration.getDefaultCityList().size());
+				writer.println("Size: " +Configuration.getDefaultCityList().size());
 				writer.print("List: ");
 				for (String name : Configuration.getDefaultCityList())
 					writer.print(name+"; ");

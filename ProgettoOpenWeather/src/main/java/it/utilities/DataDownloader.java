@@ -11,6 +11,7 @@ import javax.net.ssl.HttpsURLConnection;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import it.configuration.Configuration;
 import it.exception.DataNotFoundException;
 import it.exception.InvalidParameterException;
 
@@ -38,7 +39,7 @@ public class DataDownloader {
 		HttpsStatus = -1;
 		JSONParser parser = new JSONParser();
 		
-		HttpsURLConnection openConnection = (HttpsURLConnection) new URL(url).openConnection();
+		HttpsURLConnection openConnection = (HttpsURLConnection) new URL(url+"&appid="+Configuration.getApiKey()+"&units="+Configuration.getDefaultTempUnit()).openConnection();
 		HttpsStatus = openConnection.getResponseCode();
 		
 		InputStream in = openConnection.getInputStream(); // qui parte l'eccezione
