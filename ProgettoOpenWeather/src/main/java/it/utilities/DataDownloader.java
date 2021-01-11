@@ -71,7 +71,13 @@ public class DataDownloader {
 		
 		long pressure = (long)main.get("pressure");
 		long humidity = (long)main.get("humidity");
-		double temperature = (double)main.get("temp");
+		
+		// alcune volte temp è Double, altre Long
+		long temperature;
+		if (main.get("temp") instanceof Long)
+			temperature = (long)main.get("temp");
+		else
+			temperature = (long)(double)main.get("temp");
 		  
 		double visibility = this.getVisibility(i);
 		

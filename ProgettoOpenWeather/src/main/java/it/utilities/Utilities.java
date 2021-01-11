@@ -32,17 +32,31 @@ public class Utilities {
 		return Configuration.getDateFormatter().parse(timestamp);
 	}
 	
+	public static void updateList(List<String> list, String string) {
+		boolean added = false;
+		for(int i=0; i<list.size() && added==false; i++)
+			if(list.get(i).equals(string))
+				added = true;
+		if(!added)
+			list.add(string);
+	}
+	
 	public static double roundDouble(double value) {
 		return Math.round(value*1000)/1000;
 	}
 	
 	public static double calcAverage(List<Double> list) {
-		return 0;
-		
+		double sum = 0;
+		for (double value : list)
+			sum+=value;
+		return sum/list.size();
 	}
 	
 	public static double calcVariance(List<Double> list, double average) {
-		return 0;
+		double sum = 0;
+		for (double value : list)
+			sum+=Math.pow(value-average, 2);
+		return sum/list.size();
 		
 	}
 	
