@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 
 import it.exception.DataNotFoundException;
 import it.exception.InvalidParameterException;
-
-import it.filter.StatsFilterImpl;
+import it.filter.CheckerImpl;
+import it.filter.FiltratorImpl;
+import it.filter.Operator;
+import it.filter.SorterImpl;
 import it.utilities.DatabaseManager;
 import it.configuration.ErrorManager;
 
@@ -20,18 +22,20 @@ public class StatsService {
 	
 	// attributi
 	private DatabaseManager databaseManager = null;
-	private StatsFilterImpl statsFilter = null;
+	private CheckerImpl checker = null;
+	private FiltratorImpl filtrator = null;
+	private SorterImpl sorter = null;
 	
 	// metodi
 	public Object getData(Vector<String> cityList, Vector<String> requestedWeather, String sortingType,
-			String periodicity, Vector<String> dateSpan) {		
+			String periodicity, Vector<String> dateSpan)	 {		
 		
-		statsFilter = new StatsFilterImpl();
+		checker = new CheckerImpl();
 		
 		boolean periodicityIsSet = false;
 		
 		try {
-			periodicityIsSet = statsFilter.checkDateSpan(dateSpan);
+			periodicityIsSet = checker.checkDateSpan(dateSpan);
 			
 		} catch (InvalidParameterException e1) {
 			return new ErrorManager(e1, "Invalid parameter: periodicity is not valid - or - max size for 'datespan' is 3", false);
@@ -40,7 +44,7 @@ public class StatsService {
 		}
 		
 		try {
-			statsFilter.checkDates();
+			checker.checkDates();
 			
 		} catch (InvalidParameterException e1) {
 			return new ErrorManager(e1, "Invalid parameter: defined datespan is a future period of time", false);
@@ -51,14 +55,22 @@ public class StatsService {
 		}
 		
 		try {
-			statsFilter.checkRequestedWeather(requestedWeather);
+			checker.checkRequestedWeather(requestedWeather);
 			if (!periodicityIsSet)
-				statsFilter.checkPeriodicity(periodicity);
+				checker.checkPeriodicity(periodicity);
 			
 		} catch (InvalidParameterException e1) {
 			return new ErrorManager(e1, "Invalid parameter: max size for 'weather' is 4", false);
 		} catch (NumberFormatException e2) {
 			return new ErrorManager(new InvalidParameterException(), "Invalid parameter: '"+periodicity+"' is not a valid periodicity", false);
+		}
+		
+		try {
+			checker.checkCityList(cityList);
+		} catch (InvalidParameterException e1) {
+			return new ErrorManager(e1, "Invalid parameter: max size for 'cities' is 50", false);
+		} catch (DataNotFoundException e2) {
+			return new ErrorManager(new InvalidParameterException(), "Invalid parameter: city names are not valid", false);
 		}
 		
 		databaseManager = new DatabaseManager();
@@ -73,19 +85,30 @@ public class StatsService {
 			return new ErrorManager(e3, "", true);
 		}
 		
-		JSONArray rawData = databaseManager.getLoadedData();
+		JSONArray jsonData = databaseManager.getLoadedData();
+		filtrator = (FiltratorImpl)(Operator) checker; // eventualmente usare close() di Cloneable
 		
 		try {
-			statsFilter.filterData(rawData);
-		} catch (java.text.ParseException e) {
-			return new ErrorManager(e, "Internal Error", true);
+			filtrator.filterByDateSpan(jsonData);
+			filtrator.filterByCityList(jsonData);
+			filtrator.filterByPeriodicity(jsonData);
+			filtrator.filterByWeather(jsonData);
+		} catch (java.text.ParseException e1) {
+			return new ErrorManager(e1, "", true);
+		} catch (Exception e2) {
+			return new ErrorManager(e2, "", true);
 		}
 		
-		
+		sorter = new SorterImpl();
 		
 		// continua
+		sorter.sort(jsonData);
 		
-		return new ErrorManager(new Exception(), "Funziona", false);
+		
+		
+		return jsonData;
+		
+		// return new ErrorManager(new Exception(), "Funziona", false);
 	}
 	
 }

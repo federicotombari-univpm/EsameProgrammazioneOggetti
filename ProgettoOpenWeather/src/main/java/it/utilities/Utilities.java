@@ -1,14 +1,11 @@
 package it.utilities;
 
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import it.configuration.Configuration;
+
 
 public class Utilities {
 	
@@ -24,12 +21,6 @@ public class Utilities {
 		calendar.setTime(date);
 		calendar.add(Calendar.DATE, days);
 		return calendar.getTime();
-	}
-	
-	public static Date readAndParseTimestamp(JSONArray data, int index) throws ParseException {
-		JSONObject dataElement = (JSONObject) data.get(index);
-		String timestamp = (String) dataElement.get("timestamp");
-		return Configuration.getDateFormatter().parse(timestamp);
 	}
 	
 	public static void updateList(List<String> list, String string) {

@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-import org.json.simple.parser.ParseException;
-
 import it.exception.DataNotFoundException;
 import it.exception.InvalidParameterException;
 import it.exception.WebServiceException;
@@ -30,7 +28,7 @@ public class ErrorManager {
 		
 		if(e instanceof FileNotFoundException) {
 			errorId = 300;
-			this.message = "An error occurred while searching for the database";
+			this.message = "An error occurred while searching for the database or the configuration file";
 		}
 		
 		else if(e instanceof IOException) {
@@ -38,35 +36,39 @@ public class ErrorManager {
 			this.message = "An error occurred while requesting or sending data to the database or to the web server";
 		}
 		
-		else if(e instanceof ParseException) {
+		else if(e instanceof org.json.simple.parser.ParseException) {
 			errorId = 302;
-			this.message = "An error occurred while getting the data";
+			this.message = "Internal error: failed to parse JSON data";
+		}
+		
+		else if(e instanceof java.text.ParseException) {
+			errorId = 303;
+			this.message = "Internal error: failed to convert a String into a Date object";
 		}
 		
 		else if(e instanceof ClassCastException || e instanceof NullPointerException) {
-			errorId = 303;
+			errorId = 304;
 			this.message = "Internal error";
 		}
 		
 		else if(e instanceof DataNotFoundException) {
-			errorId = 304;
+			errorId = 305;
 			this.message = "No data available, please choose different parameters";
 		}
 		
 		else if(e instanceof InvalidParameterException) {
-			errorId = 305;
+			errorId = 306;
 			this.message = "Invalid parameter(s)";
 		}
 		
 		else if(e instanceof WebServiceException) {
-			errorId = 306;
+			errorId = 307;
 			this.message = "An error occurred while getting the data from the web server";
 		}
 		
-		// e così via
-		
+		// general case
 		else {
-			errorId = 350;
+			errorId = 320;
 			this.message = "An error occurred";
 		}
 		
