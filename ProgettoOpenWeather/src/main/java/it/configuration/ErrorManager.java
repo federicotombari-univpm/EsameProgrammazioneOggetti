@@ -104,11 +104,12 @@ public class ErrorManager {
 			
 			writer.println("(2) Configuration Settings");
 			writer.println("- Main Settings -");
-			writer.println("Api Key:            " +Configuration.getApiKey());
-			writer.println("Measurement System: " +Configuration.getDefaultTempUnit());
-			writer.println("Default City:       " +Configuration.getDefaultCity());
-			writer.println("Default Date:       " +Configuration.getDefaultDate());
-			writer.println("Default Zoom:       " +Configuration.getDefaultZoom());
+			writer.println("Api Key:             " +Configuration.getApiKey());
+			writer.println("Measurement System:  " +Configuration.getDefaultTempUnit());
+			writer.println("Default City:        " +Configuration.getDefaultCity());
+			writer.println("Default Zoom:        " +Configuration.getDefaultZoom());
+			writer.println("Default Start Date:  " +Configuration.getDefaultStartDate());
+			writer.println("Default Periodicity: " +Configuration.getDefaultPeriodicity());
 			writer.println();
 			writer.println("- Timer settings - ");
 			writer.println("Initial Thread Delay:  " +Configuration.getDefaultInitialThreadDelay()+" seconds");

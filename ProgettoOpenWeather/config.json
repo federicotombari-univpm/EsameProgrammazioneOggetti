@@ -1,7 +1,8 @@
 {
 	"apikey": "56989104be7410276956586c1fb09bf6",
 	"city": "Ancona",
-	"datestamp": "2021-01-01",
+	"startdate": "2021-01-10",
+	"periodicity": 10,
 	"database": "database.json",
 	"unit": "metric",
 	"zoom": 10,

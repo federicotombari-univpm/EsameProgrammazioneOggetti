@@ -8,13 +8,14 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import it.configuration.Configuration;
+import it.utilities.Utilities;
 
 
 public class Operator {
 
 	protected boolean filterByDateSpan;
 	protected boolean filterByCityList;
-	protected boolean filterByPeriodicity;
+	protected boolean sortFilteredData;
 	
 	protected boolean pressureRequested;
 	protected boolean humidityRequested;
@@ -23,23 +24,27 @@ public class Operator {
 	
 	protected int periodicityValue;
 	
-	protected Vector<String> cityList;
-	
 	protected Date startDate;
 	protected Date endDate;
 	
+	protected Vector<String> cityList = null;
+	
+	protected String sortingType_main = null;
+	protected String sortingType_weather = null;
+	protected String sortingType_stats = null;
+	
 	// costruttore
-	public Operator() {
+	public Operator() throws ParseException {
 		filterByDateSpan = true;
 		filterByCityList = true;
-		filterByPeriodicity = true;
+		sortFilteredData = true;
 		
 		this.setWeatherBools(false);
 		
-		periodicityValue = 0;
-		cityList = null;
-		startDate = null;
-		endDate = null;
+		periodicityValue = Configuration.getDefaultPeriodicity();
+		
+		startDate = Configuration.getDateFormatter().parse(Configuration.getDefaultStartDate());
+		endDate = Utilities.addDaysToDate(startDate, Configuration.getDefaultPeriodicity()-1);
 	}
 	
 	
@@ -51,10 +56,13 @@ public class Operator {
 		visibilityRequested = value;
 	}
 	
-	public Date readAndParseTimestamp(JSONArray data, int index) throws ParseException {
-		JSONObject dataElement = (JSONObject) data.get(index);
+	public Date readAndParseTimestamp(JSONObject dataElement) throws ParseException {
 		String timestamp = (String) dataElement.get("timestamp");
 		return Configuration.getDateFormatter().parse(timestamp);
+	}
+	
+	public Date readAndParseTimestamp(JSONArray data, int index) throws ParseException {
+		return this.readAndParseTimestamp((JSONObject) data.get(index));
 	}
 	
 }

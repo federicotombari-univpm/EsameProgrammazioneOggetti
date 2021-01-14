@@ -15,6 +15,7 @@ import it.filter.FiltratorImpl;
 import it.filter.Operator;
 import it.filter.SorterImpl;
 import it.utilities.DatabaseManager;
+import it.configuration.Configuration;
 import it.configuration.ErrorManager;
 
 @Service
@@ -22,21 +23,22 @@ public class StatsService {
 	
 	// attributi
 	private DatabaseManager databaseManager = null;
-	private CheckerImpl checker = null;
-	private FiltratorImpl filtrator = null;
-	private SorterImpl sorter = null;
+	private Operator operator = null;
 	
 	// metodi
 	public Object getData(Vector<String> cityList, Vector<String> requestedWeather, String sortingType,
 			String periodicity, Vector<String> dateSpan)	 {		
 		
-		checker = new CheckerImpl();
+		try {
+			operator = new Operator();
+		} catch (java.text.ParseException e) {
+			return new ErrorManager(e, "", true);
+		}
 		
-		boolean periodicityIsSet = false;
+		CheckerImpl checker = (CheckerImpl) operator;
 		
 		try {
-			periodicityIsSet = checker.checkDateSpan(dateSpan);
-			
+			checker.checkDateSpan(dateSpan);
 		} catch (InvalidParameterException e1) {
 			return new ErrorManager(e1, "Invalid parameter: periodicity is not valid - or - max size for 'datespan' is 3", false);
 		} catch (java.text.ParseException e2) {
@@ -45,33 +47,35 @@ public class StatsService {
 		
 		try {
 			checker.checkDates();
-			
 		} catch (InvalidParameterException e1) {
 			return new ErrorManager(e1, "Invalid parameter: defined datespan is a future period of time", false);
 		} catch (java.text.ParseException e2) {
 			return new ErrorManager(e2, "Internal Error", true);
 		} catch (DataNotFoundException e3) {
-			return new ErrorManager(e3, "No data available before 2021", false);
+			return new ErrorManager(e3, "No data available before " + Configuration.getDefaultStartDate(), false);
 		}
 		
 		try {
-			checker.checkRequestedWeather(requestedWeather);
-			if (!periodicityIsSet)
-				checker.checkPeriodicity(periodicity);
-			
-		} catch (InvalidParameterException e1) {
-			return new ErrorManager(e1, "Invalid parameter: max size for 'weather' is 4", false);
+			checker.checkPeriodicity(periodicity);
 		} catch (NumberFormatException e2) {
 			return new ErrorManager(new InvalidParameterException(), "Invalid parameter: '"+periodicity+"' is not a valid periodicity", false);
 		}
 		
 		try {
+			checker.checkRequestedWeather(requestedWeather);
+		} catch (InvalidParameterException e1) {
+			return new ErrorManager(e1, "Invalid parameter: max size for 'weather' is 4", false);
+		}
+		
+		try {
 			checker.checkCityList(cityList);
 		} catch (InvalidParameterException e1) {
-			return new ErrorManager(e1, "Invalid parameter: max size for 'cities' is 50", false);
+			return new ErrorManager(e1, "Invalid parameter: max size for 'cities' is 20", false);
 		} catch (DataNotFoundException e2) {
 			return new ErrorManager(new InvalidParameterException(), "Invalid parameter: city names are not valid", false);
 		}
+		
+		checker.checkSortingType(sortingType);
 		
 		databaseManager = new DatabaseManager();
 		
@@ -86,29 +90,37 @@ public class StatsService {
 		}
 		
 		JSONArray jsonData = databaseManager.getLoadedData();
-		filtrator = (FiltratorImpl)(Operator) checker; // eventualmente usare close() di Cloneable
+		
+		FiltratorImpl filtrator =  (FiltratorImpl) operator;
 		
 		try {
 			filtrator.filterByDateSpan(jsonData);
-			filtrator.filterByCityList(jsonData);
-			filtrator.filterByPeriodicity(jsonData);
-			filtrator.filterByWeather(jsonData);
 		} catch (java.text.ParseException e1) {
 			return new ErrorManager(e1, "", true);
-		} catch (Exception e2) {
-			return new ErrorManager(e2, "", true);
+		} catch (DataNotFoundException e2) {
+			return new ErrorManager(e2, "No data available for the chosen 'datespan'", false);
 		}
 		
-		sorter = new SorterImpl();
+		try {
+			filtrator.filterByCityList(jsonData);
+		} catch (java.text.ParseException e1) {
+			return new ErrorManager(e1, "", true);
+		} catch (DataNotFoundException e2) {
+			return new ErrorManager(e2, "No data available for the chosen 'citylist'", false);
+		}
 		
-		// continua
+		try {
+			filtrator.filterByPeriodicity(jsonData);
+		} catch (java.text.ParseException e) {
+			return new ErrorManager(e, "", true);
+		}
+		
+		filtrator.filterByWeather(jsonData);
+		
+		SorterImpl sorter = (SorterImpl) operator;
 		sorter.sort(jsonData);
 		
-		
-		
 		return jsonData;
-		
-		// return new ErrorManager(new Exception(), "Funziona", false);
 	}
 	
 }

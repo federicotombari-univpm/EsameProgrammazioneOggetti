@@ -16,13 +16,14 @@ public class Configuration {
 	
 	private static String apiKey = "56989104be7410276956586c1fb09bf6";
 	private static String defaultCity = "Ancona";
-	private static String defaultDate = "2021-01-01";
+	private static String defaultStartDate = "2021-01-10";
 	private static String defaultTempUnit = "metric";
 	
 	private static String configurationFilename = "config.json";
 	private static String databaseFilename = "database.json";
 	
 	private static int defaultZoom = 10;
+	private static int defaultPeriodicity = 10;
 	private static int defaultThreadDelay = 7200; // secondi
 	private static int defaultInitialThreadDelay = 0; // secondi
 	
@@ -32,6 +33,7 @@ public class Configuration {
 	private static final SimpleDateFormat timeFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
 	public static int errorLogCounter = 0;
 	
+	
 	public static void initializeConfig() throws IOException, ParseException, NullPointerException, ClassCastException {
 		JSONParser parser = new JSONParser();
 		BufferedReader fileReader = new BufferedReader(new FileReader(configurationFilename));
@@ -40,11 +42,12 @@ public class Configuration {
 		
 		apiKey = (String) fileData.get("apikey");
 		defaultCity = (String) fileData.get("city");
-		defaultDate = (String) fileData.get("datestamp");
+		defaultStartDate = (String) fileData.get("startdate");
 		databaseFilename = (String) fileData.get("database");
 		defaultTempUnit = (String) fileData.get("unit");
 		
 		defaultZoom = (int)(long) fileData.get("zoom");
+		defaultPeriodicity = (int)(long) fileData.get("periodicity");
 		defaultThreadDelay = (int)(long) fileData.get("delay");
 		defaultInitialThreadDelay = (int)(long) fileData.get("initialdelay");
 		
@@ -95,6 +98,14 @@ public class Configuration {
 		Configuration.defaultZoom = defaultZoom;
 	}
 	
+	public static int getDefaultPeriodicity() {
+		return defaultPeriodicity;
+	}
+
+	public static void setDefaultPeriodicity(int defaultPeriodicity) {
+		Configuration.defaultPeriodicity = defaultPeriodicity;
+	}
+
 	public static Vector<String> getDefaultCityList() {
 		return defaultCityList;
 	}
@@ -103,12 +114,12 @@ public class Configuration {
 		Configuration.defaultCityList = defaultCityList;
 	}
 
-	public static String getDefaultDate() {
-		return defaultDate;
+	public static String getDefaultStartDate() {
+		return defaultStartDate;
 	}
 
-	public static void setDefaultDate(String defaultDate) {
-		Configuration.defaultDate = defaultDate;
+	public static void setDefaultStartDate(String defaultStartDate) {
+		Configuration.defaultStartDate = defaultStartDate;
 	}
 
 	public static String getDefaultTempUnit() {
