@@ -1,7 +1,5 @@
 package it.service;
 
-package service;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,7 +83,7 @@ public class AdminService {
 	public void checkAndChangeDefaultDate(String date) throws java.text.ParseException {
 		
 		Date newDate = dateFormatter.parse(date);
-		Date defaultDate = dateFormatter.parse(Configuration.getDefaultDate());
+		Date defaultDate = dateFormatter.parse(Configuration.getDefaultStartDate());
 		
 		if(newDate.after(defaultDate)) {
 			System.out.println("Default date succesfully changed");

@@ -12,7 +12,7 @@ public class SorterImpl extends Operator implements Sorter {
 		super();	
 	}
 
-	public void sort(JSONArray jsonData) {
+	public void sortData(JSONArray jsonData) {
 		if (sortFilteredData) {
 			if (sortingType_main.equals("max->min"))
 				this.sortByStats(jsonData, true);

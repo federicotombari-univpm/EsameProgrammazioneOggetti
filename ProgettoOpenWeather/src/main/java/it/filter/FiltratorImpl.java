@@ -30,7 +30,7 @@ public class FiltratorImpl extends Operator implements Filtrator {
 				JSONObject jsonDataElement = (JSONObject) iterator.next();
 
 				// legge la data ("timestamp")
-				Date date = this.readAndParseTimestamp(jsonDataElement);
+				Date date = Utilities.readAndParseTimestamp(jsonDataElement);
 				
 				// rimuove l'elemento se la data è fuori dal 'datespan'
 				if (date.before(startDate) || date.after(endDate))
@@ -40,8 +40,8 @@ public class FiltratorImpl extends Operator implements Filtrator {
 			if (jsonData.size() == 0)
 				throw new DataNotFoundException();
 			
-			startDate = this.readAndParseTimestamp(jsonData, 0);
-			endDate = this.readAndParseTimestamp(jsonData, jsonData.size()-1);
+			startDate = Utilities.readAndParseTimestamp(jsonData, 0);
+			endDate = Utilities.readAndParseTimestamp(jsonData, jsonData.size()-1);
 		}
 		
 	}
@@ -116,7 +116,7 @@ public class FiltratorImpl extends Operator implements Filtrator {
 			for (int i=0; i<rawData.size(); i++) {
 				
 				// legge la data ("timestamp")
-				Date date = this.readAndParseTimestamp(rawData, i);
+				Date date = Utilities.readAndParseTimestamp(rawData, i);
 				
 				if (date.compareTo(checkpointDate)>=0 && date.compareTo(Utilities.addDaysToDate(checkpointDate, periodicityValue-1))<=0) {
 					

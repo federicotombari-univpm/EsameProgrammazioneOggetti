@@ -118,7 +118,7 @@ public class StatsService {
 		filtrator.filterByWeather(jsonData);
 		
 		SorterImpl sorter = (SorterImpl) operator;
-		sorter.sort(jsonData);
+		sorter.sortData(jsonData);
 		
 		return jsonData;
 	}

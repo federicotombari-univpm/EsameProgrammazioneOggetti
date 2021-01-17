@@ -12,15 +12,15 @@ import it.exception.DataNotFoundException;
 
 public class ThreadManager extends TimerTask {
 
-	DatabaseManager DM = null;
-	Timer timer = null;
+	private DatabaseManager databaseManager = null;
+	private Timer timer = null;
 	
 	private static boolean running = false;
 	
 	// costruttore
 	public ThreadManager() {
 		super();
-		DM = new DatabaseManager();
+		databaseManager = new DatabaseManager();
 	}
 	
 	// metodi
@@ -50,7 +50,7 @@ public class ThreadManager extends TimerTask {
 	public void run() {
 		
 		try {
-			DM.updateDatabase();
+			databaseManager.updateDatabase();
 			
 		} catch (DataNotFoundException e) {
 			new ErrorManager(e, "Web server returned no data", true);

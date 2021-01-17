@@ -24,7 +24,7 @@ public class DatabaseManager{ // TimerTask implementa Runnable, l'interfaccia de
 	private JSONArray localData = null;
 	private JSONArray loadedData = null;
 
-	DataDownloader DD = new DataDownloader();
+	private DataDownloader dataDownloader = new DataDownloader();
 	
 	public void createAndAddElements() throws ClassCastException, IOException, ParseException, DataNotFoundException { 
 		
@@ -35,12 +35,12 @@ public class DatabaseManager{ // TimerTask implementa Runnable, l'interfaccia de
 
 		for(int i=0; i<Configuration.getDefaultCityList().size(); i++) {
 			String url = ("https://api.openweathermap.org/data/2.5/weather?q="+(Configuration.getDefaultCityList()).get(i));
-			DD.chiamataAPI(url);
+			dataDownloader.chiamataAPI(url);
 			
 			JSONObject minorObj = new JSONObject();
 			minorObj.put("name", Configuration.getDefaultCityList().get(i));
 			
-			Weather weatherObject = DD.getMain(-1, false);
+			Weather weatherObject = dataDownloader.getMain(-1, false);
 			JSONObject weather = new JSONObject();
 			weather.put("pressure", weatherObject.getPressure());
 			weather.put("humidity", weatherObject.getHumidity());
@@ -56,8 +56,8 @@ public class DatabaseManager{ // TimerTask implementa Runnable, l'interfaccia de
 		this.insertElement(mainObj);
 	}
 	
-	public void insertElement(JSONObject elemento) {
-		this.localData.add(elemento);
+	public void insertElement(JSONObject element) {
+		this.localData.add(element);
 	}
 	
 	public void saveDatabase() throws IOException { 
@@ -85,20 +85,22 @@ public class DatabaseManager{ // TimerTask implementa Runnable, l'interfaccia de
 		localData = new JSONArray();
 		
 		try {
-			this.loadDatabase();
-			this.copyDatabase();
+			try {
+				this.loadDatabase();
+				this.copyDatabase();
 			
-		} catch (FileNotFoundException e) {
-			new ErrorManager(e, "System failed to find '"+Configuration.getDatabaseFilename()+"'", true);
+			} catch (FileNotFoundException e) {
+				new ErrorManager(e, "System failed to find '"+Configuration.getDatabaseFilename()+"'", true);
+			} finally {
+				this.createAndAddElements();
+				this.saveDatabase();
+			}
+			
 		} catch (IOException e) {
 			new ErrorManager(e, "An input error occurred while loading '"+Configuration.getDatabaseFilename()+"'", true);	
 		} catch (ParseException e) {
 			new ErrorManager(e, "Parsing error while reading from '"+Configuration.getDatabaseFilename()+"'", true);
-			
-		} finally {
-			this.createAndAddElements();
-			this.saveDatabase();
-		}
+		} 
 	}
 
 	public JSONArray getLoadedData() {

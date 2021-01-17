@@ -27,7 +27,7 @@ public class AdminController {
 	
 	@RequestMapping("/changeDefaultDate")
 	public void changeDefaultDate(@RequestParam(value = " New Date", defaultValue = "2021-01-01") String date) {
-		Configuration.setDefaultDate(date);
+		Configuration.setDefaultStartDate(date);
 	}
 		
 	@RequestMapping("/changeDefaultTempUnit")

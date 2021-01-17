@@ -31,7 +31,7 @@ public class Configuration {
 	
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	private static final SimpleDateFormat timeFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
-	public static int errorLogCounter = 0;
+	private static int errorLogCounter = 0;
 	
 	
 	public static void initializeConfig() throws IOException, ParseException, NullPointerException, ClassCastException {

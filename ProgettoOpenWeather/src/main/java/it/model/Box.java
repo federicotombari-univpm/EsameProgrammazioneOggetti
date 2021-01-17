@@ -45,4 +45,5 @@ public class Box {
 	public void setZoom(int zoom) {
 		this.zoom = zoom;
 	}
+	
 }

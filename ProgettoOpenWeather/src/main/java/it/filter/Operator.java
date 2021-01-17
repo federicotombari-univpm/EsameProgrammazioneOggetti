@@ -4,9 +4,6 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Vector;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import it.configuration.Configuration;
 import it.utilities.Utilities;
 
@@ -54,15 +51,6 @@ public class Operator {
 		humidityRequested = value;
 		temperatureRequested = value;
 		visibilityRequested = value;
-	}
-	
-	public Date readAndParseTimestamp(JSONObject dataElement) throws ParseException {
-		String timestamp = (String) dataElement.get("timestamp");
-		return Configuration.getDateFormatter().parse(timestamp);
-	}
-	
-	public Date readAndParseTimestamp(JSONArray data, int index) throws ParseException {
-		return this.readAndParseTimestamp((JSONObject) data.get(index));
 	}
 	
 }

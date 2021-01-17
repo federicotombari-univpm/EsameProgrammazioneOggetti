@@ -33,6 +33,7 @@ public class DataDownloader {
 	
 	// metodo che tramite l'URL della chiamata all'API salva in una stringa tutta la risposta
 	public DataDownloader() {};
+	
 	public void chiamataAPI(String url) throws IOException, ParseException, DataNotFoundException, ClassCastException {
 		
 		rispAPI = null;

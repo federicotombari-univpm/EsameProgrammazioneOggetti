@@ -1,36 +1,17 @@
 package it.utilities;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import it.configuration.Configuration;
 
 
 public class Utilities {
-	
-	public static String getCurrentDateToString(boolean simple) {
-		if (simple)
-			return Configuration.getDateFormatter().format(new Date());
-		else
-			return Configuration.getTimeFormatter().format(new Date());
-	}
-	
-	public static Date addDaysToDate(Date date, int days) {
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(date);
-		calendar.add(Calendar.DATE, days);
-		return calendar.getTime();
-	}
-	
-	public static void updateList(List<String> list, String string) {
-		boolean added = false;
-		for(int i=0; i<list.size() && added==false; i++)
-			if(list.get(i).equals(string))
-				added = true;
-		if(!added)
-			list.add(string);
-	}
 	
 	public static double roundDouble(double value) {
 		return Math.round(value*1000)/1000;
@@ -51,4 +32,35 @@ public class Utilities {
 		
 	}
 	
+	public static String getCurrentDateToString(boolean simple) {
+		if (simple)
+			return Configuration.getDateFormatter().format(new Date());
+		else
+			return Configuration.getTimeFormatter().format(new Date());
+	}
+	
+	public static Date addDaysToDate(Date date, int days) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(Calendar.DATE, days);
+		return calendar.getTime();
+	}
+	
+	public static Date readAndParseTimestamp(JSONObject dataElement) throws ParseException {
+		String timestamp = (String) dataElement.get("timestamp");
+		return Configuration.getDateFormatter().parse(timestamp);
+	}
+	
+	public static Date readAndParseTimestamp(JSONArray data, int index) throws ParseException {
+		return Utilities.readAndParseTimestamp((JSONObject) data.get(index));
+	}
+	
+	public static void updateList(List<String> list, String string) {
+		boolean added = false;
+		for(int i=0; i<list.size() && added==false; i++)
+			if(list.get(i).equals(string))
+				added = true;
+		if(!added)
+			list.add(string);
+	}
 }

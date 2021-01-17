@@ -24,7 +24,7 @@ public class ErrorManager {
 	public ErrorManager(Exception e, String message, boolean writeLog) {
 		
 		info = e.toString();
-		this.setTimestamp(Utilities.getCurrentDateToString(false));
+		timestamp = Utilities.getCurrentDateToString(false);
 		
 		if(e instanceof FileNotFoundException) {
 			errorId = 300;

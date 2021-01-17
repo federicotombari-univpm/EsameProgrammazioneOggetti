@@ -19,7 +19,7 @@ public class ProgettoOpenWeatherApplication {
 			Configuration.initializeConfig();
 			
 		} catch (IOException ioe) {
-			new ErrorManager(ioe, "An input/ooutput error occurred during initialization", true);
+			new ErrorManager(ioe, "An input/output error occurred during initialization", true);
 		} catch (ParseException | NullPointerException | ClassCastException e) {
 			new ErrorManager(e, "An internal error occurred during initialization", true);
 
@@ -32,3 +32,98 @@ public class ProgettoOpenWeatherApplication {
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,41 @@
+-- Error Log 1 --
+Timestamp: 2021-01-15_02:55:59
+
+(1) Error Management
+- Error Info -
+Error Id:      302
+Error Type:    Unexpected token RIGHT SQUARE(]) at position 57326.
+Error Message: Parsing error while reading from 'database.json'
+
+- Exception StackTrace -
+Unexpected token RIGHT SQUARE(]) at position 57326.
+	at org.json.simple.parser.JSONParser.parse(JSONParser.java:146)
+	at org.json.simple.parser.JSONParser.parse(JSONParser.java:92)
+	at it.utilities.DatabaseManager.loadDatabase(DatabaseManager.java:74)
+	at it.utilities.DatabaseManager.updateDatabase(DatabaseManager.java:88)
+	at it.utilities.ThreadManager.run(ThreadManager.java:53)
+	at java.base/java.util.TimerThread.mainLoop(Timer.java:556)
+	at java.base/java.util.TimerThread.run(Timer.java:506)
+
+
+(2) Configuration Settings
+- Main Settings -
+Api Key:             56989104be7410276956586c1fb09bf6
+Measurement System:  metric
+Default City:        Ancona
+Default Zoom:        10
+Default Start Date:  2021-01-10
+Default Periodicity: 10
+
+- Timer settings - 
+Initial Thread Delay:  0 seconds
+Standard Thread Delay: 7200 seconds
+Running status:        true
+
+- File Settings -
+Config Filename:   config.json
+Database Filename: database.json
+
+- Default City List - 
+Size: 10
+List: Ancona; Pesaro; Fano; San Benedetto Del Tronto; Ascoli Piceno; Senigallia; Civitanova Marche; Macerata; Jesi; Fermo; 
