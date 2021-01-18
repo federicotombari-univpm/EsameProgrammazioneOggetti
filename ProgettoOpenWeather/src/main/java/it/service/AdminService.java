@@ -1,5 +1,3 @@
-package it.service;
-
 package service;
 
 import java.io.BufferedReader;
@@ -12,14 +10,15 @@ import java.util.Date;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
 import it.configuration.Configuration;
-import it.controller.AdminController;
+import it.configuration.ErrorManager;
 import it.exception.DataNotFoundException;
+import it.exception.InvalidParameterException;
 import it.utilities.DataDownloader;
 import it.utilities.DatabaseManager;
 
@@ -31,12 +30,19 @@ public class AdminService {
 	private JSONObject rispAPI = null;
 	private	String line = "";
 	private int HttpsStatus = 0;
-	private final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
+	private  String API;
+	private String defaultCity;
+	private String defaultDate;
+	private String defaultTempUnit;
+	private String databaseFileName;
+	private int defaultZoom;
+	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
-	AdminController adminController = new AdminController();
+
+	AdminService adminService = new AdminService();
 	DataDownloader dataDownloader = new DataDownloader();
 	DatabaseManager databaseManager = new DatabaseManager();
-	public void chekAndChangeAPI (String API) throws ClassCastException, IOException, ParseException, DataNotFoundException {
+	public Object chekAndChangeAPI (String API) throws ClassCastException, IOException, ParseException, DataNotFoundException {
 		
 		rispAPI = null;
 		HttpsStatus = -1;
@@ -61,74 +67,99 @@ public class AdminService {
 		
 		int code = dataDownloader.getCode();
 		if(code!=200) 
-			System.out.println("The insert API Key isn't valid, try with another one");
-		else {
-			System.out.println("The insert API Key is valid");
-			adminController.changeAPI(API);
-		}
+			return new ErrorManager(new InvalidParameterException(),"The insert API Key isn't valid, try with another one", false);
+		else Configuration.setApiKey(API);
+		return null;
 		
 	}
 	
-	public void ceckAndChangeDefaultCity(String city) {;
+	public Object ceckAndChangeDefaultCity(String city) {;
 		
 		boolean contiene = false;
 		for (int i = 0; i< Configuration.getDefaultCityList().size();i++) {
+			
 			if(Configuration.getDefaultCityList().get(i).equals(city)) 
 				contiene = true;
 			} 
-			if(contiene) {
-				System.out.println("The inser city is now the new default city");
-				adminController.changeDefaultCity(city);
-			} else System.out.println("The insert city can't be the new default city, plese try with another one");
+			if(contiene) Configuration.setDefaultCity(city);
+			else return new ErrorManager(new InvalidParameterException(),"The insert city can't be the new default city, plese try with another one", false);
+			return null;
 		}
 	
-	public void checkAndChangeDefaultDate(String date) throws java.text.ParseException {
+	public Object checkAndChangeDefaultDate(String date) throws java.text.ParseException {
 		
 		Date newDate = dateFormatter.parse(date);
 		Date defaultDate = dateFormatter.parse(Configuration.getDefaultDate());
 		
-		if(newDate.after(defaultDate)) {
-			System.out.println("Default date succesfully changed");
-			adminController.changeDefaultDate(date);
-		}
-		else System.out.println("The inser date can't become the default date, please try with another one");	
+		if(newDate.after(defaultDate)) Configuration.setDefaultDate(date);
+		else 
+			return new ErrorManager(new InvalidParameterException(),"The inser date can't become the default date, please try with another one", false);
+		return null;	
 	}
 	
-	public void checkAndChangeDefaultTempUnit(String unit) {// per ora lo implemento ma peso possa creare problemi con la parte stats, in caso rimuovilo pure
+	public Object checkAndChangeDefaultTempUnit(String unit) {// per ora lo implemento ma peso possa creare problemi con la parte stats, in caso rimuovilo pure
 		
 		if(unit.equals("Kelvin") || unit.equals("Imperial")) {
-			System.out.println("The temperature unit insert is now the new default unit");
-			adminController.changeDefaultTempUnit(unit);
+			Configuration.setDefaultTempUnit(unit);
 		}
-		else System.out.println("The insert unit isn't correct, please try with another one");
+		else  return new ErrorManager(new InvalidParameterException(),"The insert unit isn't correct, please try with another one", false);
+		return null;
 	}
 	
-	public void checkAndChangeConfigurationFileName(String name) {
-		if(name.contains(".json")) {
-			System.out.println("The new name can be accept");
-			adminController.changeConfigurationFileName(name);
-		}
-		else System.out.println("The new name can't be the new configuration file name, please try with another one");
-	}
 	
-	public void checkAndChangeDatabaseFileManager(String name) throws IOException{
+	public Object checkAndChangeDatabaseFileManager(String name) throws IOException{
 		if(name.contains(".json")) {
-			System.out.println("The new name can be accept");
-			adminController.changeDatabaseFileName(name);
+			Configuration.setDatabaseFilename(name);
 			databaseManager.saveDatabase();
 		}
-		else System.out.println("The new name can't be the new database name, please try with another one");
+		else   return new ErrorManager(new InvalidParameterException(),"The new name can't be the new database name, please try with another one", false);
+		return null;
 	}
 	
-	public void checkAndChangeZoom(int zoom) {//non sono sicuro se 50 sia troppo o troppo poco
+	public Object checkAndChangeZoom(int zoom) {//non sono sicuro se 50 sia troppo o troppo poco
 		if(zoom>10 && zoom<=50) {
 			System.out.println("The insert zoom is now the default zoom");
-			adminController.changeDefaultZoom(zoom);
-		}else if(zoom<10) System.out.println("The inser zoom in too small, try with another one bigger");
-		
-		else if(zoom>50)System.out.println("The inser zoom in too big, try with another one smaller");
+			Configuration.setDefaultZoom(zoom);
+		}else if(zoom<10) return new ErrorManager(new InvalidParameterException(),"The inser zoom in too small, try with another one bigger", false);
+		else if(zoom>50)return new ErrorManager(new InvalidParameterException(),"The inser zoom in too big, try with another one smaller", false);
+		return null;
+
 
 	}
+
 	
+	public Object checkAndChangeConfig(JSONObject config) throws IOException, ParseException, DataNotFoundException, java.text.ParseException {
+		
+		if(config.has("apikey")) {
+			API = config.getString("apikey");
+			adminService.chekAndChangeAPI(API);
+		}
+		
+		if (config.has("city")) {
+			defaultCity = config.getString("city");
+			adminService.ceckAndChangeDefaultCity(defaultCity);
+		}
+		
+		if(config.has("startdate")) {
+			defaultDate = config.getString("startdate");
+			adminService.checkAndChangeDefaultDate(defaultDate);
+		}
+		
+		if(config.has("unit")) {
+			defaultTempUnit = config.getString("unit");
+			adminService.checkAndChangeDefaultTempUnit(defaultTempUnit);
+		}
+		
+		if(config.has("database")) {
+			databaseFileName = config.getString("database");
+			adminService.checkAndChangeDatabaseFileManager(databaseFileName);
+		}
+		
+		if(config.has("zoom")) {
+			defaultZoom = config.getInt("zoom");
+			adminService.checkAndChangeZoom(defaultZoom);
+		}
+		return null;
+	}
 	
 }
