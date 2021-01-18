@@ -41,44 +41,7 @@ public class AdminController {
 	private  String databaseFilename;
 	
 	private static int defaultZoom;
-
-/*
-	@RequestMapping("/changeAPI")
-	public void changeAPI (@RequestParam(value = "API" , defaultValue = "56989104be7410276956586c1fb09bf6") String apiKey) throws ClassCastException, IOException, ParseException, DataNotFoundException {
-		adminService.chekAndChangeAPI(apiKey);
-	}
-
-	@RequestMapping("/changeDefaultCity")
-	public void changeDefaultCity(@RequestParam(value = " New Default City" , defaultValue = "Ancona") String defaultCity) {
-		Configuration.setDefaultCity(defaultCity);
-	}
-	
-	@RequestMapping("/changeDefaultDate")
-	public void changeDefaultDate(@RequestParam(value = " New Date", defaultValue = "2021-01-01") String date) {
-		Configuration.setDefaultDate(date);
-	}
 		
-	@RequestMapping("/changeDefaultTempUnit")
-	public void changeDefaultTempUnit(@RequestParam(value = "New Temp Unit", defaultValue = "metric") String tempUnit) {
-		Configuration.setDefaultTempUnit(tempUnit);
-	}
-	
-	@RequestMapping("/changeConfigurationFileName")
-	public void changeConfigurationFileName (@RequestParam(value = "New Configuration File Name", defaultValue = "config.json")String ConfigFileName) {
-		Configuration.setConfigurationFilename(ConfigFileName);
-	}
-	
-	@RequestMapping("/changeDatabaseFileName")
-	public void changeDatabaseFileName (@RequestParam(value = "New Database File Name", defaultValue = "database.json")String DatabaseName) {
-		Configuration.setDatabaseFilename(DatabaseName);
-	}
-	
-	@RequestMapping("/changeDefaultZoom")
-	public void changeDefaultZoom(@RequestParam(value = "New Zoom", defaultValue = "10" ) int Zoom) {
-		Configuration.setDefaultZoom(Zoom);
-	}
-*/	
-	
 	@RequestMapping(value = "/changeConfingAdmin", method = RequestMethod.GET)
 	public ResponseEntity<Object> setConfing(@RequestBody Configuration configuaration) throws IOException, ParseException, DataNotFoundException, java.text.ParseException{
 		JSONParser parser = new JSONParser();
