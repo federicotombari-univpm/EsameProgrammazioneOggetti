@@ -12,13 +12,30 @@ import it.configuration.Configuration;
 import it.exception.DataNotFoundException;
 import it.utilities.Utilities;
 
+/**
+ * Classe che estende Operator, da cui eredita i campi che definiscono i filtri, e implementa Filtrator, da cui ottiene, facendone l'override,
+ * i metodi per il filtraggio dei dati disponibili, che avviene in base gli attributi ridefiniti precedentemente, prima di procedere
+ * all'ordinamento dei dati (si vedano CheckerImpl e SorterImpl). Le eccezioni sono gestite tramite throw(s).
+ * @author JoshuaSgariglia
+ */
 public class FiltratorImpl extends Operator implements Filtrator {
 	
-	
+	/**
+	 * Costruttore della classe, che richiama quello della superclasse.
+	 * @throws ParseException eccezione lanciata dal costruttore della superclasse
+	 */
 	public FiltratorImpl() throws ParseException {
 		super();
 	}
 
+	/**
+	 * Metodo che (eventualmente) analizza i dati disponibili scorrendo il parametro, un JSONArray, e rimuove gli elementi che non rientrano
+	 * nel periodo di tempo scelto attraverso un Iterator (classe di 'java.util'). Infine controlla che il JSONArray non sia rimasto vuoto
+	 * e aggiorna le date di inizio e di fine con quelle del timestamp del primo e ultimo elemento della lista.
+	 * @param jsonData i dati da filtrare secondo il periodo temporale
+	 * @throws ParseException lanciata dal metodo statico 'readAndParseTimestamp' della classe Utilities, nell'omonimo package
+	 * @throws DataNotFoundException se non ci sono dati disponibili per l'arco di tempo precedentemente definito
+	 */
 	public void filterByDateSpan(JSONArray jsonData) throws ParseException, DataNotFoundException {
 		if (filterByDateSpan) {
 
@@ -46,7 +63,15 @@ public class FiltratorImpl extends Operator implements Filtrator {
 		
 	}
 	
-	public void filterByCityList(JSONArray jsonData) throws ParseException, DataNotFoundException {
+	/**
+	 * Metodo che (eventualmente) analizza i dati disponibili scorrendo il parametro e leggendo per ogni elemento un'altra lista interna,
+	 * e rimuove gli elementi in cui il campo "name" non è tra i nomi delle città richieste attraverso un Iterator (classe di 'java.util').
+	 * Infine controlla che il JSONArray non sia rimasto vuoto. Se un'intera lista rimane vuota, l'elemento intero che contiene quella lista
+	 * è rimosso. Infine controlla che siano rimasti dati con cui generare statistiche.
+	 * @param jsonData i dati da filtrare secondo la lista di città
+	 * @throws DataNotFoundException se non ci sono dati disponibili per i nomi di città scelti
+	 */
+	public void filterByCityList(JSONArray jsonData) throws DataNotFoundException {
 		if (filterByCityList) {
 			
 			@SuppressWarnings("unchecked")
@@ -91,11 +116,22 @@ public class FiltratorImpl extends Operator implements Filtrator {
 		}
 	}
 	
+	/**
+	 * Metodo che suddivide il periodo scelto in sottoperiodi in base al valore della periodicità, costruendo per ogni sottoperiodo una struttura
+	 * dati, diversa da quella iniziale (ossia il parametro), e inserendovi contemporaneamente i dati relativi a quel periodo. Infine assegna al
+	 * JSONArray iniziale quello appena costruito, in cui in ogni periodo, per ogni città, si ha una lista di condizioni meteo. Nel caso in cui
+	 * l'utente non abbia precedentemente scelto una periodicità, né date di inzio e di fine, il ciclo esterno compierà una sola iterazione,
+	 * inserendo tutti i dati in un unico periodo.
+	 * @param rawData i dati da ordinare secondo la periodicità
+	 * @throws ParseException lanciata dal metodo statico 'readAndParseTimestamp' della classe Utilities, nell'omonimo package
+	 */
 	@SuppressWarnings("unchecked")
 	public void filterByPeriodicity(JSONArray rawData) throws ParseException  {
 		JSONArray sortedData = new JSONArray();
 	
+		// scorre, definendoli, i sottoperiodi
 		for (Date checkpointDate = startDate; checkpointDate.compareTo(endDate)<=0; checkpointDate = Utilities.addDaysToDate(checkpointDate, periodicityValue)) {							
+			
 			// crea e aggiunge un elemento a sortedData
 			JSONObject sortedDataElement = new JSONObject();
 			sortedDataElement.put("startDate", Configuration.getDateFormatter().format(checkpointDate)+"_00:00:00");
@@ -118,6 +154,7 @@ public class FiltratorImpl extends Operator implements Filtrator {
 				// legge la data ("timestamp")
 				Date date = Utilities.readAndParseTimestamp(rawData, i);
 				
+				// controlla che la data della rilevazione sia compresa nel sottoperiodo
 				if (date.compareTo(checkpointDate)>=0 && date.compareTo(Utilities.addDaysToDate(checkpointDate, periodicityValue-1))<=0) {
 					
 					// legge la lista ("list")
@@ -126,11 +163,13 @@ public class FiltratorImpl extends Operator implements Filtrator {
 						
 					// scorre l'array più interno ("list")
 					for (int j=0; j<rawList.size(); j++) {
-							
+						
+						// legge il nome e il meteo ("name" e "weather")
 						JSONObject rawListElement = (JSONObject) rawList.get(j);
 						String name = (String) rawListElement.get("name");
 						JSONObject weather = (JSONObject) rawListElement.get("weather");
 						
+						// aggiunge "weather" nella "weatherlist" della città corrispondente, nella nuova struttura dati
 						for (int k=0; k<sortedList.size(); k++) {
 							JSONObject sortedListElement = (JSONObject) sortedList.get(k);
 							if (name.equals(sortedListElement.get("name"))) {
@@ -146,6 +185,12 @@ public class FiltratorImpl extends Operator implements Filtrator {
 		rawData = sortedData;
 	}
 	
+	/**
+	 * Metodo che filtra, per ogni periodo e per ogni città, i dati sul meteo in base a quelli richiesti, aggiungendoli a delle nuove liste di dati,
+	 * una per ogni periodo. Chiama poi il metodo 'createStatsObject' della stessa classe per calcolare le statistiche e creare un oggetto da
+	 * inserire al posto della lista di dati "weatherlist", che pertanto viene rimossa.
+	 * @param jsonData i dati da filtrare secondo le condizioni meteo, e di cui calcolare le statistiche
+	 */
 	@SuppressWarnings("unchecked")
 	public void filterByWeather(JSONArray jsonData) {
 		
@@ -200,6 +245,11 @@ public class FiltratorImpl extends Operator implements Filtrator {
 		}	
 	}
 	
+	/**
+	 * Metodo che calcola la media e la varianza dell'elenco di valori dato come parametro. Inoltre, crea un nuovo JSONObject e vi inserisce
+	 * le statistiche calcolate come campi. Utilizza, per il calcolo delle statistiche, metodi della classe Utilities, nell'omonimo package.
+	 * @param values lista di valori di cui calcolare le statistiche
+	 */
 	@SuppressWarnings("unchecked")
 	public JSONObject createStatsObject(Vector<Double> values) {
 		JSONObject statsElement = new JSONObject();

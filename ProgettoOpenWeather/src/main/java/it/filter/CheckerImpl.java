@@ -9,12 +9,29 @@ import it.configuration.Configuration;
 import it.exception.DataNotFoundException;
 import it.exception.InvalidParameterException;
 
+/**
+ * Classe che estende Operator, da cui eredita i campi che definiscono i filtri, e implementa Checker, da cui ottiene, facendone l'override,
+ * i metodi per il controllo dei filtri scelti dall'utente, definendo al contempo gli attributi ereditati, i quali serviranno poi nel
+ * filtraggio e nell'ordinamento dei dati (si vedano FiltratorImpl e SorterImpl). Le eccezioni sono gestite tramite throw(s).
+ * @author JoshuaSgariglia
+ */
 public class CheckerImpl extends Operator implements Checker {
 	
+	/**
+	 * Costruttore della classe, che richiama quello della superclasse.
+	 * @throws ParseException eccezione lanciata dal costruttore della superclasse
+	 */
 	public CheckerImpl() throws ParseException {
 		super();
 	}
 
+	/**
+	 * Metodo che controlla che il parametro/filtro 'dateSpan' non sia vuoto (se lo è, modifica il valore di 'filterByDateSpan'), e
+	 * successivamente modificare il valore degli attributi 'startDate' e 'endDate' in base al contenuto del parametro.
+	 * @param datespan date che delimitano il periodo di cui si vogliono avere le statistiche 
+	 * @throws InvalidParameterException se il parametro ha più di due elementi
+	 * @throws java.text.ParseException in caso di errore nel parsing della stringa in data
+	 */
 	public void checkDateSpan(Vector<String> dateSpan) throws InvalidParameterException, java.text.ParseException {
 		if(dateSpan == null) {
 			filterByDateSpan = false;
@@ -34,6 +51,12 @@ public class CheckerImpl extends Operator implements Checker {
 		};	
 	}
 	
+	/**
+	 * Metodo che controlla che le date siano nell'ordine temporale corretto e che non siano date future o troppo nel passato.
+	 * @throws InvalidParameterException se la data di inizio del periodo è nel futuro
+	 * @throws java.text.ParseException in caso di errore nel parsing di 'defaultStartDate' (vedi classe Configuration) in data
+	 * @throws DataNotFoundException se la data di fine è antecedente a 'defaultStartDate' (vedi classe Configuration)
+	 */
 	public void checkDates() throws InvalidParameterException, java.text.ParseException, DataNotFoundException {
 		if (startDate.compareTo(endDate) > 0) {
 			Date aux = new Date();
@@ -49,6 +72,12 @@ public class CheckerImpl extends Operator implements Checker {
 			throw new DataNotFoundException();
 	}
 	
+	/**
+	 * Metodo che, data una stringa come parametro, controlla se questa corrisponde a dei valori predefiniti, altrimenti
+	 * procede alla usa conversione della stringa in intero, modificando il valore dell'attributo 'periodicityValue'.
+	 * @param periodicity la durata in giorni di ogni periodo statistico
+	 * @throws NumberFormatException se il parametro non è un numero intero
+	 */
 	public void checkPeriodicity(String periodicity) throws NumberFormatException {
 		if (periodicity.equals("daily") || startDate.equals(endDate))
 			periodicityValue = 1;
@@ -62,6 +91,12 @@ public class CheckerImpl extends Operator implements Checker {
 			periodicityValue = Math.abs(Integer.parseInt(periodicity));
 	}
 	
+	/**
+	 * Metodo che utilizza la lista di stringhe che ha come parametro per modificare eventualmente i valori degli attributi
+	 * booleani relativi alle condizioni meteo. Per fare ciò, gli elementi della lista vengono confrontati con stringhe predefinite.
+	 * @param requestedWeather la lista di condizioni meteo di cui si vogliono le statistiche
+	 * @throws InvalidParameterException se la lista ha più di quattro elementi
+	 */
 	public void checkRequestedWeather(Vector<String> requestedWeather) throws InvalidParameterException {
 		if(requestedWeather == null || requestedWeather.get(0).equals("all"))
 			this.setWeatherBools(true);
@@ -96,7 +131,13 @@ public class CheckerImpl extends Operator implements Checker {
 			}
 	}
 	
-	public void checkCityList(Vector<String> cityList) throws InvalidParameterException, DataNotFoundException {
+	/**
+	 * Metodo che, datà una lista di nomi di città, controlla se essi corrispondono ai nomi di città di 'defaultCityList' (vedi classe Configuration).
+	 * In caso affermativo, il nome della città è aggiunto all'attributo 'cityList'.
+	 * @param cityList la lista dei nomi delle città
+	 * @throws InvalidParameterException se la lista di nomi è troppo lunga (più di 20 elementi)
+	 */
+	public void checkCityList(Vector<String> cityList) throws InvalidParameterException {
 		this.cityList = new Vector<String>();
 		
 		if (cityList == null) {
@@ -126,6 +167,12 @@ public class CheckerImpl extends Operator implements Checker {
 		}
 	}
 	
+	/**
+	 * Metodo che analizza il contenuto del parametro e stabilisce un tipo di ordinamento tra quelli predefiniti andando a modificare
+	 * i valori degli attributi relativi all'ordinamento (i cui nomi sono del tipo "sortingType_xxx"). In particolare, modifica 
+	 * 'sortingType_main' e in un caso chiama il metodo 'checkWeatherSorting' della stessa classe.
+	 * @param sortingType il tipo di ordinamento dei dati statistici
+	 */
 	public void checkSortingType(String sortingType) {
 		if (sortingType.length() == 9) {
 			
@@ -152,7 +199,12 @@ public class CheckerImpl extends Operator implements Checker {
 			sortFilteredData = false;
 		}
 	}
-		
+	
+	/**
+	 * Metodo che analizza il contenuto del parametro e in base ad esso modifica il valore dell'attributo
+	 * 'sortingType_weather'. Infine chiama il metodo 'checkStatsSorting' della stessa classe.
+	 * @param sortingType il tipo di ordinamento dei dati statistici
+	 */
 	public void checkWeatherSorting(String sortingType) {
 		String weatherType = sortingType.substring(3,6);
 		
@@ -177,6 +229,10 @@ public class CheckerImpl extends Operator implements Checker {
 		}
 	}
 	
+	/**
+	 * Metodo che analizza il contenuto del parametro e modifica in base ad esso il valore dell'attributo 'sortingType_stats'.
+	 * @param statsType il tipo di ordinamento dei dati statistici per quanto riguarda le media e la varianza
+	 */
 	public void checkStatsSorting(String statsType) {
 		if (statsType.equals("avg") || statsType.equals("Avg")) {
 			sortingType_stats = new String("average");

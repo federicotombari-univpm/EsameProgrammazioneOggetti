@@ -18,14 +18,32 @@ import it.utilities.DatabaseManager;
 import it.configuration.Configuration;
 import it.configuration.ErrorManager;
 
+/**
+ * Classe @Service che di occupa di gestire le richieste che gli utenti effettuano attraverso la classe StatsController. Utilizza
+ * un'istanza della classe DatabaseManager (package 'utilities') per caricare il database e ottenere le informazioni passate sulle città,
+ * e un oggetto di tipo Operator (package 'filter') per controllare i filtri, filtrare i dati e infine riordinarli in base all'eventuale
+ * criterio scelto dall'utente.
+ * @author JoshuaSgariglia
+ */
 @Service
 public class StatsService {
 	
-	// attributi
 	private DatabaseManager databaseManager = null;
 	private Operator operator = null;
 	
-	// metodi
+	/**
+	 * Metodo che elabora statistiche: inizialmente controlla i filtri attraverso i metodi di un oggetto della classe Checker, dunque
+	 * carica i dati usando l'attributo 'databaseManager', successivamente filtra questi dati attraverso un oggetto di tipo Filtrator e
+	 * infine li ordina in base alla media o alla pressione di un tipo di condizione meteo, o alfabeticamente in base al nome delle città,
+	 * con un oggetto di tipo Sorter (Checker, Filtrator e Sorter sono classi del package 'filter'). Le eccezioni sono gestite tramite
+	 * try-catch e la classe ErrorManager.
+	 * @param cityList la lista di città di cui elaborare le statistiche
+	 * @param requestedWeather le informazioni meteo oggetto delle statistiche
+	 * @param sortingType il tipo di ordinamento post-elaborazione
+	 * @param periodicity la durata in giorni di ogni periodo di cui calcolare statistiche
+	 * @param dateSpan le date di inizio e di fine del periodo da considerare
+	 * @return un JSONArray di statistiche sul meteo
+	 */
 	public Object getData(Vector<String> cityList, Vector<String> requestedWeather, String sortingType,
 			String periodicity, Vector<String> dateSpan)	 {		
 		
@@ -57,22 +75,20 @@ public class StatsService {
 		
 		try {
 			checker.checkPeriodicity(periodicity);
-		} catch (NumberFormatException e2) {
+		} catch (NumberFormatException e) {
 			return new ErrorManager(new InvalidParameterException(), "Invalid parameter: '"+periodicity+"' is not a valid periodicity", false);
 		}
 		
 		try {
 			checker.checkRequestedWeather(requestedWeather);
-		} catch (InvalidParameterException e1) {
-			return new ErrorManager(e1, "Invalid parameter: max size for 'weather' is 4", false);
+		} catch (InvalidParameterException e) {
+			return new ErrorManager(e, "Invalid parameter: max size for 'weather' is 4", false);
 		}
 		
 		try {
 			checker.checkCityList(cityList);
-		} catch (InvalidParameterException e1) {
-			return new ErrorManager(e1, "Invalid parameter: max size for 'cities' is 20", false);
-		} catch (DataNotFoundException e2) {
-			return new ErrorManager(new InvalidParameterException(), "Invalid parameter: city names are not valid", false);
+		} catch (InvalidParameterException e) {
+			return new ErrorManager(e, "Invalid parameter: max size for 'cities' is 20", false);
 		}
 		
 		checker.checkSortingType(sortingType);
@@ -103,10 +119,8 @@ public class StatsService {
 		
 		try {
 			filtrator.filterByCityList(jsonData);
-		} catch (java.text.ParseException e1) {
-			return new ErrorManager(e1, "", true);
-		} catch (DataNotFoundException e2) {
-			return new ErrorManager(e2, "No data available for the chosen 'citylist'", false);
+		} catch (DataNotFoundException e) {
+			return new ErrorManager(e, "No data available for the chosen 'citylist'", false);
 		}
 		
 		try {

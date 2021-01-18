@@ -8,6 +8,11 @@ import org.json.simple.JSONObject;
 
 import it.exception.DataNotFoundException;
 
+/**
+ * Interfaccia che include metodi astratti per il filtraggio dei dati disponibili in base ai parametri scelti dall' utente, rimuovendo
+ * i dati superflui e/o costruendo nuove strutture dati con le informazioni cercate.
+ * @author JoshuaSgariglia
+ */
 public interface Filtrator {
 
 	public abstract void filterByDateSpan(JSONArray jsonData) throws ParseException, DataNotFoundException;

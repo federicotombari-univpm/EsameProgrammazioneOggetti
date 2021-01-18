@@ -13,6 +13,12 @@ import it.exception.WebServiceException;
 import it.utilities.ThreadManager;
 import it.utilities.Utilities;
 
+/**
+ * Classe che si occupa della gestione di gran parte delle eccezioni che vengono lanciate da metodi delle altre classi del progetto.
+ * Essa consiste di un costruttore per definire il tipo di errore in base all'eccezione, e di un metodo per scrivere un log nel caso in
+ * cui venga richiesto, oltre che dei metodi getter e setter per i quattro attributi della classe.
+ * @author JoshuaSgariglia
+ */
 public class ErrorManager {
 
 	private int errorId;
@@ -20,7 +26,17 @@ public class ErrorManager {
 	private String message;
 	private String timestamp;
 	
-	// nel catch di ogni try-catch ci sarà una chiamata a questo costruttore
+	/**
+	 * Unico costruttore della classe: inizialmente popola gli attributi 'info' in base all'eccezione e 'timestamp' con la data e l'ora di
+	 * quel momento, utilizzando el secondo caso un metodo statico della classe 'Utilities', nell'omonimo package; successivamente,
+	 * attraverso una serie di controlli, attribuisce dei valori agli attributi 'errorId' (codice dell'errore) e 'message' (messaggio predefinito) in base
+	 * all'eccezione. Il valore dell'attributo 'message' rimane quello di default a meno che il parametro 'message' sia diverso da una stringa vuota;
+	 * infine, eventualmente chiama il metodo 'log' per scrivere un log di errore in formato TXT tramite l'utilizzo di java.io.PrintWriter con informazioni
+	 * sull'eccezione e con uno "screenshot" dei parametri di configurazione.
+	 * @param e l'eccezione sollevata in un altra classe
+	 * @param message il messaggio opzionale relativo all'eccezione
+	 * @param writeLog per richiedere di scrivere o meno un log di errore
+	 */
 	public ErrorManager(Exception e, String message, boolean writeLog) {
 		
 		info = e.toString();
@@ -66,7 +82,7 @@ public class ErrorManager {
 			this.message = "An error occurred while getting the data from the web server";
 		}
 		
-		// general case
+		// caso generale
 		else {
 			errorId = 320;
 			this.message = "An error occurred";
@@ -78,8 +94,9 @@ public class ErrorManager {
 		if (writeLog)
 			this.log(e);
 	}
-		
-	public void log(Exception e) {
+	
+	// metodo per scrivere un log di errore
+	private void log(Exception e) {
 		try {
 			Configuration.increaseErrorLogCounter();
 			String filename = "errorlog_"+Configuration.getErrorLogCounter()+".txt";
@@ -105,7 +122,7 @@ public class ErrorManager {
 			writer.println("(2) Configuration Settings");
 			writer.println("- Main Settings -");
 			writer.println("Api Key:             " +Configuration.getApiKey());
-			writer.println("Measurement System:  " +Configuration.getDefaultTempUnit());
+			writer.println("Measurement System:  " +Configuration.getMeasurementSystem());
 			writer.println("Default City:        " +Configuration.getDefaultCity());
 			writer.println("Default Zoom:        " +Configuration.getDefaultZoom());
 			writer.println("Default Start Date:  " +Configuration.getDefaultStartDate());

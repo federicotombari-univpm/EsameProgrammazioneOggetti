@@ -14,14 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 import it.configuration.Configuration;
 import it.service.WeatherService;
 
-// qui saranno presenti le chiamate per ottenere il meteo attuale in base a una città, una città e un margine di errore, un box
+/**
+ * Controller per ottenere le informazioni meteo in base a dei parametri: utilizza un'istanza @Autowired della classe WeatherService (package 'service')
+ * e consiste di alcuni metodi (con @RequestMapping di tipo GET) che nei rispettivi 'return' chiamano metodi di 'weatherService'.
+ * @author JoshuaSgariglia
+ */
 @RestController
 public class WeatherController {
 
 	@Autowired
 	WeatherService weatherService;
-	
-	// ricordare di aggiungere i controlli per eccezioni
 	
 	// città di default
 	@RequestMapping(value = "/weather", method = RequestMethod.GET)
