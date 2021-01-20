@@ -1,6 +1,7 @@
 package it.filter;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 /**
  * Interfaccia che include metodi astratti per l'ordinamento  in base a criteri scelti dall'utente dei dati
@@ -9,8 +10,9 @@ import org.json.simple.JSONArray;
  */
 public interface Sorter {
 	
-	public abstract void sortData(JSONArray jsonData);
-	public abstract void sortByStats(JSONArray jsonData, boolean descending);
-	public abstract void sortByCityName(JSONArray jsonData, boolean alphabetical);
+	public abstract JSONArray sortData(JSONArray jsonData);
+	public abstract JSONArray sortByStats(JSONArray jsonData, boolean descending);
+	public abstract JSONArray sortByCityName(JSONArray jsonData, boolean alphabetical);
+	public abstract double getStatsField(JSONObject jsonElement);
 	
 }

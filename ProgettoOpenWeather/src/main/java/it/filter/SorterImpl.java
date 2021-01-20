@@ -15,28 +15,34 @@ import org.json.simple.JSONObject;
 public class SorterImpl extends Operator implements Sorter {
 	
 	/**
-	 * Costruttore della classe, che richiama quello della superclasse.
+	 * Costruttore della classe, che utilizza un oggetto di tipo CheckerImpl per inizializzare gli attributi.
+	 * @param l'oggetto da cui ottenere i dati
 	 * @throws ParseException eccezione lanciata dal costruttore della superclasse
 	 */
-	public SorterImpl() throws ParseException {
-		super();	
+	public SorterImpl(CheckerImpl checker) throws ParseException {
+		this.sortFilteredData = checker.sortFilteredData;
+		this.sortingType_main = checker.sortingType_main;
+		this.sortingType_weather = checker.sortingType_weather;
+		this.sortingType_stats = checker.sortingType_stats;
 	}
 
 	/**
 	 * Metodo che stabilisce quale altro metodo della classe chiamare, e con quali parametri, in base al contenuto dell'attributo 'sortingType_main'.
 	 * @param jsonData i dati filtrati da riordinare
+	 * @return 
 	 */
-	public void sortData(JSONArray jsonData) {
+	public JSONArray sortData(JSONArray jsonData) {
 		if (sortFilteredData) {
 			if (sortingType_main.equals("max->min"))
-				this.sortByStats(jsonData, true);
+				return this.sortByStats(jsonData, true);
 			else if (sortingType_main.equals("min->max"))
-				this.sortByStats(jsonData, false);
+				return this.sortByStats(jsonData, false);
 			else if (sortingType_main.equals("a->z"))
-				this.sortByCityName(jsonData, true);
+				return this.sortByCityName(jsonData, true);
 			else if (sortingType_main.equals("z->a"))
-				this.sortByCityName(jsonData, false);
+				return this.sortByCityName(jsonData, false);
 		}
+		return jsonData;
 	}
 	
 	/**
@@ -46,31 +52,27 @@ public class SorterImpl extends Operator implements Sorter {
 	 * @param jsonData i dati filtrati da riordinare
 	 * @param descending per sapere se ordinare in maniera decrescente ("true") o crescente ("false")
 	 */
-	public void sortByStats(JSONArray jsonData, boolean descending) {
+	public JSONArray sortByStats(JSONArray jsonData, boolean descending) {
 		for(int i=0; i<jsonData.size(); i++) {
 			JSONObject jsonDataElement = (JSONObject) jsonData.get(i);
 			JSONArray jsonList = (JSONArray) jsonDataElement.get("list");
 			
+			// BubbleSort
 			boolean swap = true;
 			while (swap) {
 				swap = false;
 				for (int j=0; j<jsonList.size()-1; j++) {
-					JSONObject jsonListElement1 = (JSONObject) jsonList.get(j);
-					JSONObject weather1 = (JSONObject) jsonListElement1.get(sortingType_weather);
-					JSONObject jsonListElement2 = (JSONObject) jsonList.get(j+1);
-					JSONObject weather2 = (JSONObject) jsonListElement2.get(sortingType_weather);
-					
-					if ((double)weather1.get(sortingType_stats) > (double)weather2.get(sortingType_stats)) {
+					if (this.getStatsField((JSONObject) jsonList.get(j)) > this.getStatsField((JSONObject) jsonList.get(j+1))) {
 						Collections.swap(jsonList, j, j+1);
 						swap = true;
 					}
-				
 				}
 			}
 			
 			if (descending)
 				Collections.reverse(jsonList);
 		}
+		return jsonData;
 	}
 
 	/**
@@ -79,7 +81,7 @@ public class SorterImpl extends Operator implements Sorter {
 	 * @param jsonData i dati filtrati da riordinare
 	 * @param alphabetical per sapere se ordinare in ordine alfabetico normale ("true") o inverso ("false")
 	 */
-	public void sortByCityName(JSONArray jsonData, boolean alphabetical) {
+	public JSONArray sortByCityName(JSONArray jsonData, boolean alphabetical) {
 		for(int i=0; i<jsonData.size(); i++) {
 			JSONObject jsonDataElement = (JSONObject) jsonData.get(i);
 			JSONArray jsonList = (JSONArray) jsonDataElement.get("list");
@@ -104,5 +106,18 @@ public class SorterImpl extends Operator implements Sorter {
 			if (!alphabetical)
 				Collections.reverse(jsonList);
 		}
+		return jsonData;
+	}
+	
+	/**
+	 * Metodo che dato un JSONObject, ottiene il valore di un certo tipo di statistica (in base agli attributi della classe).
+	 * @param jsonElement struttura dati che contiene i dati statistici sul meteo
+	 * @return il valore della statistica cercata
+	 */
+	public double getStatsField(JSONObject jsonElement) {
+		JSONObject weatherStats = (JSONObject) jsonElement.get("weatherStats");
+		JSONObject weather = (JSONObject) weatherStats.get(sortingType_weather);
+		return (double) weather.get(sortingType_stats);
+		
 	}
 }

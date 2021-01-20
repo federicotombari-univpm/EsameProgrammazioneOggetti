@@ -39,6 +39,9 @@ public class WeatherService {
 	 */
 	public Object getByCityName(String name) { 
 		
+		if (name == null || name == "")
+			name = Configuration.getDefaultCity();
+		
 		try {
 			dataDownloader.chiamataAPI("weather?q="+name);
 			
@@ -91,7 +94,14 @@ public class WeatherService {
 	 * @return l'oggetto ritornato dal metodo 'getBoxData'
 	 */
 	public Object getByCityCoords(String name, List<Double> defineError) { 
-		double errorLon, errorLat;
+		if (name == null)
+			name = Configuration.getDefaultCity();
+		
+		double errorLon = 0, errorLat = 0;
+		
+		if (defineError == null)
+			return new ErrorManager(new InvalidParameterException(), "Invalid parameters: all 'errordef' parameters are missing", false);
+			
 		switch(defineError.size()) {
 			case 2:
 				errorLat = defineError.get(0);
@@ -101,13 +111,10 @@ public class WeatherService {
 				errorLat = defineError.get(0);
 				errorLon = errorLat;
 				break;
-			case 0:
-				Exception exception = new InvalidParameterException();
-				return new ErrorManager(exception, "Invalid parameters: all parameters are missing", false);
+				
 			default:
-				Exception exception1 = new InvalidParameterException();
-				return new ErrorManager(exception1, "Invalid parameters: only 2 parameters are needed", false);
-		}
+				return new ErrorManager(new InvalidParameterException(), "Invalid parameters: in 'errordef', only 2 parameters are needed", false);
+			}
 		
 		try {
 			dataDownloader.chiamataAPI("weather?q="+name);
@@ -186,15 +193,15 @@ public class WeatherService {
 			case 3:
 				minLat = defineBox.get(0);
 				minLon = defineBox.get(1);
-				maxLat = minLat + Configuration.getDefaultWidth();
-				maxLon = minLon + Configuration.getDefaultWidth();
+				maxLat = minLat + Configuration.getDefaultErrorWidth();
+				maxLon = minLon + Configuration.getDefaultErrorWidth();
 				zoom   = defineBox.get(2);
 				break;
 			case 2:
 				minLat = defineBox.get(0);
 				minLon = defineBox.get(1);
-				maxLat = minLat + Configuration.getDefaultWidth();
-				maxLon = minLon + Configuration.getDefaultWidth();
+				maxLat = minLat + Configuration.getDefaultErrorWidth();
+				maxLon = minLon + Configuration.getDefaultErrorWidth();
 				zoom   = Configuration.getDefaultZoom();
 				break;
 			case 0:

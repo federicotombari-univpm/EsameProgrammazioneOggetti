@@ -12,7 +12,6 @@ import it.exception.DataNotFoundException;
 import it.exception.InvalidParameterException;
 import it.filter.CheckerImpl;
 import it.filter.FiltratorImpl;
-import it.filter.Operator;
 import it.filter.SorterImpl;
 import it.utilities.DatabaseManager;
 import it.configuration.Configuration;
@@ -29,14 +28,13 @@ import it.configuration.ErrorManager;
 public class StatsService {
 	
 	private DatabaseManager databaseManager = null;
-	private Operator operator = null;
 	
 	/**
 	 * Metodo che elabora statistiche: inizialmente controlla i filtri attraverso i metodi di un oggetto della classe Checker, dunque
 	 * carica i dati usando l'attributo 'databaseManager', successivamente filtra questi dati attraverso un oggetto di tipo Filtrator e
 	 * infine li ordina in base alla media o alla pressione di un tipo di condizione meteo, o alfabeticamente in base al nome delle città,
 	 * con un oggetto di tipo Sorter (Checker, Filtrator e Sorter sono classi del package 'filter'). Le eccezioni sono gestite tramite
-	 * try-catch e la classe ErrorManager.
+	 * try-catch e la classe ErrorManager (package 'Configuration').
 	 * @param cityList la lista di città di cui elaborare le statistiche
 	 * @param requestedWeather le informazioni meteo oggetto delle statistiche
 	 * @param sortingType il tipo di ordinamento post-elaborazione
@@ -47,13 +45,12 @@ public class StatsService {
 	public Object getData(Vector<String> cityList, Vector<String> requestedWeather, String sortingType,
 			String periodicity, Vector<String> dateSpan)	 {		
 		
+		CheckerImpl checker;
 		try {
-			operator = new Operator();
+			checker = new CheckerImpl();
 		} catch (java.text.ParseException e) {
 			return new ErrorManager(e, "", true);
 		}
-		
-		CheckerImpl checker = (CheckerImpl) operator;
 		
 		try {
 			checker.checkDateSpan(dateSpan);
@@ -107,10 +104,15 @@ public class StatsService {
 		
 		JSONArray jsonData = databaseManager.getLoadedData();
 		
-		FiltratorImpl filtrator =  (FiltratorImpl) operator;
+		FiltratorImpl filtrator;
+		try {
+			filtrator = new FiltratorImpl(checker);
+		} catch (java.text.ParseException e) {
+			return new ErrorManager(e, "", true);
+		}
 		
 		try {
-			filtrator.filterByDateSpan(jsonData);
+			jsonData = filtrator.filterByDateSpan(jsonData);
 		} catch (java.text.ParseException e1) {
 			return new ErrorManager(e1, "", true);
 		} catch (DataNotFoundException e2) {
@@ -118,23 +120,27 @@ public class StatsService {
 		}
 		
 		try {
-			filtrator.filterByCityList(jsonData);
+			jsonData = filtrator.filterByCityList(jsonData);
 		} catch (DataNotFoundException e) {
 			return new ErrorManager(e, "No data available for the chosen 'citylist'", false);
 		}
 		
 		try {
-			filtrator.filterByPeriodicity(jsonData);
+			jsonData = filtrator.filterByPeriodicity(jsonData);
 		} catch (java.text.ParseException e) {
 			return new ErrorManager(e, "", true);
 		}
 		
-		filtrator.filterByWeather(jsonData);
+		jsonData = filtrator.filterByWeather(jsonData);
 		
-		SorterImpl sorter = (SorterImpl) operator;
-		sorter.sortData(jsonData);
+		SorterImpl sorter;
+		try {
+			sorter = new SorterImpl(checker);
+		} catch (java.text.ParseException e) {
+			return new ErrorManager(e, "", true);
+		}
 		
-		return jsonData;
+		return sorter.sortData(jsonData);
 	}
 	
 }

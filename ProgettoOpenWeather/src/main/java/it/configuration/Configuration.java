@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.Vector;
 
 import org.json.simple.JSONArray;
@@ -34,7 +35,7 @@ public class Configuration {
 	
 	private static Vector<String> defaultCityList = null;
 	
-	private static final int defaultWidth = 2;
+	private static final int defaultErrorWidth = 2;
 	
 	private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 	private static final SimpleDateFormat timeFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
@@ -70,6 +71,36 @@ public class Configuration {
 		defaultCityList = new Vector<String>();
 		for (int i=0; i<cityList.size(); i++)
 			defaultCityList.add((String) cityList.get(i));
+	}
+	
+	/**
+	 * Metodo che ottiene uno "screenshot" dei parametri di configurazione, ossia salva i loro valori nel momento in cui
+	 * viene chiamato questo metodo.
+	 * @return una struttura dati con i parametri di configurazione
+	 */
+	public static HashMap<String, Object> getScreenshot() {
+		HashMap<String, Object> screenshot = new HashMap<String, Object>();
+		HashMap<String, Object> main = new HashMap<String, Object>();
+		HashMap<String, Object> numeric = new HashMap<String, Object>();
+		HashMap<String, Object> files = new HashMap<String, Object>();
+		screenshot.put("main", main);
+		main.put("apikey", apiKey);
+		main.put("city", defaultCity);
+		main.put("startdate", defaultStartDate);
+		main.put("unit", configurationFilename);
+		screenshot.put("files", files);
+		files.put("datafile", databaseFilename);
+		files.put("configfile", configurationFilename);
+		screenshot.put("numeric", numeric);
+		numeric.put("zoom", defaultZoom);
+		numeric.put("periodicity", defaultPeriodicity);
+		numeric.put("delay", defaultThreadDelay);
+		numeric.put("initialdelay", defaultInitialThreadDelay);
+		numeric.put("logcounter", errorLogCounter);
+		numeric.put("errorwidth", defaultErrorWidth);
+		screenshot.put("citylist", defaultCityList);
+		return screenshot;
+		
 	}
 	
 	/**
@@ -266,11 +297,11 @@ public class Configuration {
 	}
 	
 	/**
-	 *  Metodo getter dell'attributo 'defaultWidth'
-	 * @return il valore di 'defaultWidth'
+	 *  Metodo getter dell'attributo 'defaultErrorWidth'
+	 * @return il valore di 'defaultErrorWidth'
 	 */
-	public static int getDefaultWidth() {
-		return defaultWidth;
+	public static int getDefaultErrorWidth() {
+		return defaultErrorWidth;
 	}
 
 	/**

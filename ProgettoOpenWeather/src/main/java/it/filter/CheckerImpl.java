@@ -6,8 +6,10 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import it.configuration.Configuration;
+import it.configuration.ErrorManager;
 import it.exception.DataNotFoundException;
 import it.exception.InvalidParameterException;
+import it.utilities.Utilities;
 
 /**
  * Classe che estende Operator, da cui eredita i campi che definiscono i filtri, e implementa Checker, da cui ottiene, facendone l'override,
@@ -142,6 +144,12 @@ public class CheckerImpl extends Operator implements Checker {
 		
 		if (cityList == null) {
 			filterByCityList = false;
+			try {
+				this.cityList = Configuration.getDefaultCityList();
+			} catch (NullPointerException e) {
+				new ErrorManager(e,"Default City List is empty", true);
+				this.cityList.add(Configuration.getDefaultCity());
+			}
 		}
 		
 		else if (cityList.size() > 20) 
@@ -159,7 +167,7 @@ public class CheckerImpl extends Operator implements Checker {
 					String city = iterator.next();
 					if (city.equals(defaultCity)) {
 						found = true;
-						this.cityList.add(city);
+						Utilities.updateList(this.cityList, city);
 						iterator.remove();
 					}
 				}

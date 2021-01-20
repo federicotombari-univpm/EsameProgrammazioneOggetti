@@ -5,13 +5,11 @@ import java.util.Vector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.configuration.Configuration;
 import it.service.WeatherService;
 
 /**
@@ -25,25 +23,39 @@ public class WeatherController {
 	@Autowired
 	WeatherService weatherService;
 	
-	// città di default
-	@RequestMapping(value = "/weather", method = RequestMethod.GET)
-	public ResponseEntity<Object> getDefaultWeather() {
-		return new ResponseEntity<>(weatherService.getByCityName(Configuration.getDefaultCity()), HttpStatus.OK);
-	}
-	
 	// città singola
-	@RequestMapping(value = "/weather/city/{city}", method = RequestMethod.GET)
-	public ResponseEntity<Object> getCityWeather(@PathVariable(value = "city") String name) {
+	/**
+	 * Metodo che, dato come parametro il nome di una città, ritorna in formato JSON le informazioni meteo su quella città
+	 * e le sue coordinate chiamando un metodo della classe WeatherService (package 'service').
+	 * @param name il nome della città
+	 * @return le informazioni sulla città
+	 */
+	@RequestMapping(value = "/weather/city", method = RequestMethod.GET)
+	public ResponseEntity<Object> getCityWeather(@RequestParam(value = "city", required = false) String name) {
 		return new ResponseEntity<>(weatherService.getByCityName(name), HttpStatus.OK);
 	}
 	
 	// box a partire da città
-	@RequestMapping(value = "/weather/citybox/{city}", method = RequestMethod.GET)
-	public ResponseEntity<Object> getCityBoxWeather(@PathVariable(value = "city") String name,
-			@RequestParam("errordef") Vector<Double> defineError) {
+	/**
+	 * Metodo che, dato il nome di una città e delle misure di errore, utilizza un metodo della classe WeatherService per
+	 * definire un area geografica ed ottenere le informazioni meteo relative alle principali città di quella zona.
+	 * @param name il nome della città
+	 * @param defineError i margini di errore
+	 * @return una lista di città con le relative informazioni meteo e coordinate
+	 */
+	@RequestMapping(value = "/weather/citybox", method = RequestMethod.GET)
+	public ResponseEntity<Object> getCityBoxWeather(
+			@RequestParam(value = "city", required = false) String name,
+			@RequestParam(value = "errordef", required = false) Vector<Double> defineError) {
 		return new ResponseEntity<>(weatherService.getByCityCoords(name, defineError), HttpStatus.OK);
 	}
 	
+	/**
+	 * Metodo che, date delle coordinate geografiche, utilizza un metodo della classe WeatherService per
+	 * definire un area geografica ed ottenere le informazioni meteo relative alle principali città di quella zona.
+	 * @param definebox le coordinate dell'area geografica
+	 * @return una lista di città con le relative informazioni meteo e coordinate
+	 */
 	// box a partire da coordinate
 	@RequestMapping(value = "/weather/box", method = RequestMethod.GET)
 	public ResponseEntity<Object> getBoxWeather(@RequestParam(value = "boxdef") Vector<Double> defineBox) {

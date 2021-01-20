@@ -35,7 +35,7 @@ public class StatsController {
 	 * @param dateSpan date di inizio e di fine del periodo di cui ottenere le statistiche
 	 * @return JSONArray di statistiche meteo
 	 */
-	@RequestMapping(value = "/stats", method = RequestMethod.GET)
+	@RequestMapping(value = "/stats", method = RequestMethod.POST)
 	public ResponseEntity<Object> getStats(
 				@RequestParam (value = "cities", required = false) Vector<String> cityList,
 				@RequestParam (value = "weather", required = false) Vector<String> requestedWeather,

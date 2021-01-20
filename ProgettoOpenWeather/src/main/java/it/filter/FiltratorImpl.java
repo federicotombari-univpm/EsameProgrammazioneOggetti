@@ -21,11 +21,21 @@ import it.utilities.Utilities;
 public class FiltratorImpl extends Operator implements Filtrator {
 	
 	/**
-	 * Costruttore della classe, che richiama quello della superclasse.
+	 * Costruttore della classe, che utilizza un oggetto di tipo CheckerImpl per inizializzare gli attributi.
+	 * @param l'oggetto da cui ottenere i dati
 	 * @throws ParseException eccezione lanciata dal costruttore della superclasse
 	 */
-	public FiltratorImpl() throws ParseException {
-		super();
+	public FiltratorImpl(CheckerImpl checker) throws ParseException {
+		this.filterByDateSpan = checker.filterByDateSpan;
+		this.filterByCityList = checker.filterByCityList;
+		this.pressureRequested = checker.pressureRequested;
+		this.humidityRequested = checker.humidityRequested;
+		this.temperatureRequested = checker.temperatureRequested;
+		this.visibilityRequested = checker.visibilityRequested;
+		this.periodicityValue = checker.periodicityValue;
+		this.startDate = checker.startDate;
+		this.endDate = checker.endDate;
+		this.cityList = checker.cityList;
 	}
 
 	/**
@@ -33,10 +43,11 @@ public class FiltratorImpl extends Operator implements Filtrator {
 	 * nel periodo di tempo scelto attraverso un Iterator (classe di 'java.util'). Infine controlla che il JSONArray non sia rimasto vuoto
 	 * e aggiorna le date di inizio e di fine con quelle del timestamp del primo e ultimo elemento della lista.
 	 * @param jsonData i dati da filtrare secondo il periodo temporale
+	 * @return i dati filtrati secondo il periodo temporale
 	 * @throws ParseException lanciata dal metodo statico 'readAndParseTimestamp' della classe Utilities, nell'omonimo package
 	 * @throws DataNotFoundException se non ci sono dati disponibili per l'arco di tempo precedentemente definito
 	 */
-	public void filterByDateSpan(JSONArray jsonData) throws ParseException, DataNotFoundException {
+	public JSONArray filterByDateSpan(JSONArray jsonData) throws ParseException, DataNotFoundException {
 		if (filterByDateSpan) {
 
 			@SuppressWarnings("unchecked")
@@ -60,6 +71,7 @@ public class FiltratorImpl extends Operator implements Filtrator {
 			startDate = Utilities.readAndParseTimestamp(jsonData, 0);
 			endDate = Utilities.readAndParseTimestamp(jsonData, jsonData.size()-1);
 		}
+		return jsonData;
 		
 	}
 	
@@ -69,9 +81,10 @@ public class FiltratorImpl extends Operator implements Filtrator {
 	 * Infine controlla che il JSONArray non sia rimasto vuoto. Se un'intera lista rimane vuota, l'elemento intero che contiene quella lista
 	 * è rimosso. Infine controlla che siano rimasti dati con cui generare statistiche.
 	 * @param jsonData i dati da filtrare secondo la lista di città
+	 * @return i dati filtrati secondo la lista di città
 	 * @throws DataNotFoundException se non ci sono dati disponibili per i nomi di città scelti
 	 */
-	public void filterByCityList(JSONArray jsonData) throws DataNotFoundException {
+	public JSONArray filterByCityList(JSONArray jsonData) throws DataNotFoundException {
 		if (filterByCityList) {
 			
 			@SuppressWarnings("unchecked")
@@ -114,6 +127,7 @@ public class FiltratorImpl extends Operator implements Filtrator {
 			if (jsonData.size() == 0)
 				throw new DataNotFoundException();
 		}
+		return jsonData;
 	}
 	
 	/**
@@ -123,10 +137,11 @@ public class FiltratorImpl extends Operator implements Filtrator {
 	 * l'utente non abbia precedentemente scelto una periodicità, né date di inzio e di fine, il ciclo esterno compierà una sola iterazione,
 	 * inserendo tutti i dati in un unico periodo.
 	 * @param rawData i dati da ordinare secondo la periodicità
+	 * @return i dati ordinati secondo la periodicità
 	 * @throws ParseException lanciata dal metodo statico 'readAndParseTimestamp' della classe Utilities, nell'omonimo package
 	 */
 	@SuppressWarnings("unchecked")
-	public void filterByPeriodicity(JSONArray rawData) throws ParseException  {
+	public JSONArray filterByPeriodicity(JSONArray rawData) throws ParseException  {
 		JSONArray sortedData = new JSONArray();
 	
 		// scorre, definendoli, i sottoperiodi
@@ -134,8 +149,8 @@ public class FiltratorImpl extends Operator implements Filtrator {
 			
 			// crea e aggiunge un elemento a sortedData
 			JSONObject sortedDataElement = new JSONObject();
-			sortedDataElement.put("startDate", Configuration.getDateFormatter().format(checkpointDate)+"_00:00:00");
-			sortedDataElement.put("endDate", Configuration.getDateFormatter().format(Utilities.addDaysToDate(checkpointDate, periodicityValue-1))+"_23:59:59");
+			sortedDataElement.put("periodStartTime", Configuration.getDateFormatter().format(checkpointDate)+"_00:00:00");
+			sortedDataElement.put("periodEndTime", Configuration.getDateFormatter().format(Utilities.addDaysToDate(checkpointDate, periodicityValue-1))+"_23:59:59");
 			JSONArray sortedList = new JSONArray();
 			sortedDataElement.put("list", sortedList);			
 			sortedData.add(sortedDataElement);
@@ -182,17 +197,23 @@ public class FiltratorImpl extends Operator implements Filtrator {
 				}		
 			}			
 		}
-		rawData = sortedData;
+		
+		JSONObject lastElement = (JSONObject) sortedData.get(sortedData.size()-1);
+		lastElement.put("actualEndTime", Configuration.getDateFormatter().format(endDate)+"_23:59:59");
+		
+		return sortedData;
+		
 	}
 	
 	/**
 	 * Metodo che filtra, per ogni periodo e per ogni città, i dati sul meteo in base a quelli richiesti, aggiungendoli a delle nuove liste di dati,
 	 * una per ogni periodo. Chiama poi il metodo 'createStatsObject' della stessa classe per calcolare le statistiche e creare un oggetto da
 	 * inserire al posto della lista di dati "weatherlist", che pertanto viene rimossa.
+	 * @return i dati statistici, filtrati secondo le condizioni meteo
 	 * @param jsonData i dati da filtrare secondo le condizioni meteo, e di cui calcolare le statistiche
 	 */
 	@SuppressWarnings("unchecked")
-	public void filterByWeather(JSONArray jsonData) {
+	public JSONArray filterByWeather(JSONArray jsonData) {
 		
 		// scorre l'array più esterno
 		for (int i=0; i<jsonData.size(); i++) {
@@ -239,10 +260,11 @@ public class FiltratorImpl extends Operator implements Filtrator {
 					stats.put("visibility", this.createStatsObject(visibilityList));
 				}
 				
-				jsonListElement.put("stats", stats);
+				jsonListElement.put("weatherStats", stats);
 				jsonListElement.remove("weatherlist");
 			}
-		}	
+		}
+		return jsonData;
 	}
 	
 	/**

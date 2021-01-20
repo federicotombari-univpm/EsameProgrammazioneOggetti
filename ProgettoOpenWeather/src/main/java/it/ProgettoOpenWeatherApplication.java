@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import it.configuration.Configuration;
 import it.configuration.ErrorManager;
-import it.utilities.ThreadManager;
 
 /**
  * Classe principale del progetto, da cui si può avviare il programma. Si tratta della classe che contiene il 'main'.
@@ -33,10 +32,7 @@ public class ProgettoOpenWeatherApplication {
 		} catch (ParseException | NullPointerException | ClassCastException e) {
 			new ErrorManager(e, "An internal error occurred during initialization", true);
 
-		} finally {
-			ThreadManager threadManager = new ThreadManager(); 		// da rimuovere prima della versione finale
-			threadManager.startThread(false);						// da rimuovere prima della versione finale
-			
+		} finally {	
 			SpringApplication.run(ProgettoOpenWeatherApplication.class, args);
 		}
 	}
