@@ -1,0 +1,3 @@
+[0120/160152.965:ERROR:file_io_win.cc(180)] CreateFile C:\Program Files (x86)\Jamsarah\Reports\Dump\settings.dat: Accesso negato. (0x5)
+[0120/160152.978:ERROR:registration_protocol_win.cc(130)] TransactNamedPipe: Pipe terminata. (0x6D)
+[0120/160152.980:ERROR:file_io_win.cc(180)] CreateFile C:\Program Files (x86)\Jamsarah\Reports\Dump\settings.dat: Accesso negato. (0x5)
