@@ -68,7 +68,7 @@ public class AdminController {
 			@PathVariable (value = "action") String action,
 			@RequestParam(value = "forced", required = false) boolean forced) {
 		
-		return new ResponseEntity<>(adminService.timertaskService(action, forced), HttpStatus.OK);
+		return new ResponseEntity<>(adminService.timerTaskService(action, forced), HttpStatus.OK);
 	}
 }
 

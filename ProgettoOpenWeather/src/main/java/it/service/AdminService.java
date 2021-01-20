@@ -201,7 +201,7 @@ public class AdminService {
 	 * @param forced per forzare il riavvio del thread nel caso in cui sia già in esecuzione
 	 * @return informazioni sull'esito della richiesta e\o sullo stato del timer
 	 */
-	public Object timertaskService(String action, boolean forced) {
+	public Object timerTaskService(String action, boolean forced) {
 		HashMap<String,Object> hashmap = new HashMap<String,Object>();
 		hashmap.put("message", "No internal errors occurred");
 		
