@@ -6,8 +6,8 @@ La versione di Java utilizzata per lo sviluppo del progetto è la 11 (JRE System
 
 #### Autori
 Sono autori del progetto gli studenti del secondo anno di corso:
-- Federico Tombari (**matricola**: , **email**: @studenti.univpm.it) - Contributo: %
-- Joshua Sgariglia (**matricola**: 1092411, **email**: S1092411@studenti.univpm.it) - Contributo: %
+- Federico Tombari - Contributo: 50%
+- Joshua Sgariglia - Contributo: 50%
 
 #### Requisiti
 Per poter utilizzare il programma è necessario [scaricarlo](https://github.com/federicotombari-univpm/EsameProgrammazioneOggetti/archive/main.zip) sul proprio computer e avviarlo. Essendo scritto in linguaggio Java, per poterlo eseguire è necessario avere una JVM (Java Virtual Machine) installata sul proprio sistema operativo. Nel caso si voglia solo eseguire il programma è sufficiente [scaricare il JRE](https://www.java.com/it/download/manual.jsp) (Java Runtime Enviroment). E' possibile verificare la propria versione di Java da console ed eseguendo il seguente comando (valido nei sistemi Windows e Linux):
@@ -67,27 +67,42 @@ Diagramma delle classe, in cui sono messe in evidenza le associazioni interne ai
 Di seguito sono riportati i diagrammi delle sequenze divisi in base alle tre parti del progetto.
 #### Parte "Weather"
 - Caso in cui l'utente richiede le condizioni meteorologiche di una città:
-![sequencediagram](https://github.com/federicotombari-univpm/EsameProgrammazioneOggetti/tree/main/ProgettoOpenWeather/diagrams/sequenceDiagrams/weather/GET _weather_citySequenceDiagram.jpg)
+![sequencediagram](https://github.com/federicotombari-univpm/EsameProgrammazioneOggetti/tree/main/ProgettoOpenWeather/diagrams/sequenceDiagrams/weather/GET_weather_citySequenceDiagram.jpg)
+
+In seguito alla chiamta "GET /weather/city" WeatherService avendo come parametro il nome di una città, ritorna le informazioni di quella città.
 
 - Caso in cui l'utente richiede le condizioni meteorologiche di un'area geografica definita tramite le coordinate di una città e un margine di errore:
 ![sequencediagram](https://github.com/federicotombari-univpm/EsameProgrammazioneOggetti/tree/main/ProgettoOpenWeather/diagrams/sequenceDiagrams/weather/GET_weather_cityboxSequenceDiagram.jpg)
 
+In seguito alla chiamata "GET /weather/citybox" WeatherService ritorna all'utente le informazioni di una area geografica delimitata da coordinate e definita da un metodo della classe WeatherService a partire dal nome di una città. Questo permette di ricavare le coordinate dell'area e le rispettive informazioni sul meteo. Determinare l'area è possibile attraverso metodi che grazie alla definizione di un "errore" aumentano le coordinate della città desiderata creando un'area di interesse.
+
 - Caso in cui l'utente richiede le condizioni meteorologiche di un'area geografica definita direttamente:
 ![sequencediagram](https://github.com/federicotombari-univpm/EsameProgrammazioneOggetti/tree/main/ProgettoOpenWeather/diagrams/sequenceDiagrams/weather/GET_weather_boxSequenceDiagram.jpg)
+
+In seguito alla chiamata "GET /weather/box" WeatherService genera un'area di interesse a partire dalle coordinate. L'utente potrà visualizzare le informazioni meteo delle città più importanti in quell'area.
 
 #### Parte "Stats"
 - Elaborazione dei dati e calcolo delle statistiche:
 ![sequencediagram](https://github.com/federicotombari-univpm/EsameProgrammazioneOggetti/tree/main/ProgettoOpenWeather/diagrams/sequenceDiagrams/stats/POST_statsSequenceDiagram.jpg)
 
+In seguito alla chiamata "POST /stats" StatsService elabora le statistiche nel modo richiesto dall'utente. In primo luogo verifica i filtri, poi carica i dati nel database e successivamente li filtra in base a ciò che l'utente ha specificato: i dati possono essere filtrati in base alla media o alla varianza di pressione, umidità, temperatura o visibilità, o ordinati alfabeticamente rispetto ai nomi delle città. Per fare ciò vengono chiamati dei metodi che modificano la struttura con i dati e la riordinano.
+Per quanto riguarda media e varianza, queste vengono calcolate nell'ultima tappa del filtraggio, inoltre vengono arrotondate ad una valore decimale (ai millesimi) tramite un metodo della classe Utilities, nell'omonimo package.
+
 #### Parte "Admin"
 - Caso in cui l'admin vuole visualizzare lo stato dei parametri di configurazione:
 ![sequencediagram](https://github.com/federicotombari-univpm/EsameProgrammazioneOggetti/tree/main/ProgettoOpenWeather/diagrams/sequenceDiagrams/admin/GET_configSequenceDiagram.jpg)
 
+In seguito alla chiamata "GET /config" AdminService genera uno screenshot nel quale vengono salvati tutti i parametri di configurazione nel momento in cui viene richiesto. Successivamente vengono restituiti all'utente per poterli visualizzare.
+
 - Caso in cui l'admin vuole modificare alcuni parametri di configurazione a runtime:
 ![sequencediagram](https://github.com/federicotombari-univpm/EsameProgrammazioneOggetti/tree/main/ProgettoOpenWeather/diagrams/sequenceDiagrams/admin/POST_configSequenceDiagram.jpg)
 
+In seguito alla chiamata "POST /config" AdminService permette la modifica dei parametri di configurazione senza dover riavviare il programma. Questo avviene tramite la chiamata di diversi metodi, in base ai parametri di configurazione scelti da modificare, che come prima cosa fanno dei test per verificare che il nuovo parametro sia corretto e successivamente lo vanno a modificare, fornendo all'utente i nuovi parametri.
+
 - Caso in cui l'admin vuole re-inizializzare i parametri di configurazione da file:
 ![sequencediagram](https://github.com/federicotombari-univpm/EsameProgrammazioneOggetti/tree/main/ProgettoOpenWeather/diagrams/sequenceDiagrams/admin/PUT_configSequenceDiagram.jpg)
+
+In seguito alla chiamata "PUT /config" Admin Service reinizializza i parametri di configurazione mostrandoli all'utente tramite uno screenshot.
 
 ## 3) Guida all'utilizzo dell'API
 Una volta scaricato il progetto sul proprio dispositivo e dopo averlo avviato tramite console o con l'aiuto di un IDE, è possibile utilizzando attraverso un qualsiasi motore di ricerca tramite l'indirizzo
@@ -108,7 +123,7 @@ Dove il tipo di mapping è GET.
 Vi è un filtro da immettere come "Param":
 - name: il nome della città di cui si vogliono ottenere le condizioni meteo attuali.
 
-**Un esempio:**
+**Esempio**
 
 Richiesta:
 ```path
@@ -154,12 +169,12 @@ Vi sono filtri da immettere come "Params":
 - errorlat: margine di errore della latitudine;
 - errorlon: margine di errore della longitudine.
 
-**Un esempio:**
+**Esempio**
 
 Richiesta:
 ```path
     localhost:8080/weather/citybox?city=Pescara&errordef=1,1
-    ```
+```
 Risposta:
 ```json
     [
@@ -193,7 +208,9 @@ Risposta:
     },
     {...}
 ]
+```
 
+Il significato dei campi è lo stesso che per il primo tipo di chiamata, l'unica differenza è che stavolta abbiamo una lista di città invece che una sola.
 
 #### 3) Richiesta meteo - gruppo di città (box definito direttamente)
 La chiamata si presenta come:
@@ -208,7 +225,7 @@ Vi sono filtri da immettere come "Params":
 - maxlon: il valore massimo della longitudine;
 - zoom: lo zoom (un valore maggiore equivale a più città rilevate).
 
-**Un esempio:**
+**Esempio**
 
 Richiesta:
 ```path
@@ -265,14 +282,272 @@ Risposta:
 Il significato dei campi è lo stesso che per il primo tipo di chiamata, l'unica differenza è che stavolta abbiamo una lista di città invece che una sola.
 
 ### 3.2) API "Stats" - statistiche
-### 3.1) API "Admin" - amministrazione
+#### Filtri
+Per la parte stats vi è una sola chiamata, con mapping POST.
+La chiamata si presenta come:
+```path
+    localhost:8080/stats?cities=[city1,city2,...]&weather=[type1,type2,...]&periodicity=[days]&datespan=[startdate,enddate]&sorting=[sorting]
+```
+Vi sono filtri da immettere come "Params":
+- city1,city2,...: le città di cui si vogliono ottenere le statistiche;
+- type1,type2,...: le condizioni meteo di cui si vogliono ottenere le statistiche;
+- days: la periodicità (in giorni) con cui si vogliono ottenere le statistiche;
+- startdate,enddate: le date di inizio e di fine del periodo;
+- sorting: l'ordinamento finale delle statistiche.
 
+Ecco tutti i valori possibili per i parametri:
+- cities: una o più città tra quelle predefinite (vedi file di configurazione). Se nessuna città è scelta, verrano considerate tutte quelle predefinite;
+- weather: uno o più tra "pressure" (oppure "prs"), "humidity" (oppure "hum"), "temperature" (oppure "tmp") e "visibility" (oppure "vis"). Se nessuno è scelto, verranno considerati tutti e quattro;
+- periodicity: un valore numerico intero positivo; "daily", "weekly" e "monthly" sono valori predefiniti;
+- datespan: date di inizio e di fine secondo il formato "yyyy-MM-dd";
+- sorting:
+    - tipo 1) diviso in tre parti "[1][2][3]", dove:
+        - la prima, "max" oppure "min", per ordinare in ordine descrescente o crescente di valore;
+        - la seconda, "Prs", "Hum", "Tmp" oppure "Vis", per scegliere la condizione meteo in base al quale ordinare;
+        - la terza, "Avg" oppure "Var", per ordinare in base alla media oppure alla varianza.
+    - tipo 2) in alternativa, si può ordinare alfabeticamente in base ai nomi delle città:
+        - "atoz" oppure "AtoZ" per l'ordine alfabetico;
+        - "ztoa" oppure "ZtoA" per l'ordine alfabetico inverso.
+
+#### Esempio
+Richiesta:
+```path
+    localhost:8080/stats?cities=Fano&periodicity=1&datespan=2021-01-10,2021-01-14&sorting=maxPrsAvg&weather=pressure
+```
+Risposta:
+```json
+    [
+    {
+        "periodStartTime": "2021-01-10_00:00:00",
+        "periodEndTime": "2021-01-10_23:59:59",
+        "list": [
+            {
+                "name": "Macerata",
+                "weatherStats": {
+                    "pressure": {
+                        "average": 1019.4,
+                        "variance": 0.24
+                    }
+                }
+            },
+            {
+                "name": "Fano",
+                "weatherStats": {
+                    "pressure": {
+                        "average": 1014.2,
+                        "variance": 0.16
+                    }
+                }
+            }
+        ]
+    },
+    {...}
+    {
+        "periodStartTime": "2021-01-14_00:00:00",
+        "actualEndTime": "2021-01-14_23:59:59",
+        "periodEndTime": "2021-01-14_23:59:59",
+        "list": [
+            {
+                "name": "Macerata",
+                "weatherStats": {
+                    "pressure": {
+                        "average": 1012.0,
+                        "variance": 13.5
+                    }
+                }
+            },
+            {
+                "name": "Fano",
+                "weatherStats": {
+                    "pressure": {
+                        "average": 1009.875,
+                        "variance": 3.609
+                    }
+                }
+            }
+        ]
+    }
+]
+```
+Si noti che nell'ultimo elemento compaiono due elementi di fine data: questo perché il periodo scelto non è sempre divisibile esattamente per la periodicità, per cui
+- "actualEndTime" indica la data di fine effettiva;
+- "periodEndTime" indica la data di fine dell'ultimo periodo definito.
+
+### 3.3) API "Admin" - amministrazione
+Per la lettura, modifica o inizializzazione di configuration
+La chiamata nei tre diversi casi è sempre del tipo:
+```path
+    localhost:8080/config
+```
+Variano tuttavia il mapping e i parametri da immettere
+
+#### Mapping GET
+Nessun parametro. Il JSON restituito è del tipo:
+```json
+{
+    "files": {
+        "configfile": "config.json",
+        "datafile": "database.json"
+    },
+    "numeric": {
+        "logcounter": 0,
+        "delay": 7200,
+        "periodicity": 10,
+        "initialdelay": 0,
+        "zoom": 10,
+        "errorwidth": 2
+    },
+    "citylist": [
+        "Ancona",
+        "Pesaro",
+        "Fano",
+        "San Benedetto Del Tronto",
+        "Ascoli Piceno",
+        "Senigallia",
+        "Civitanova Marche",
+        "Macerata",
+        "Jesi",
+        "Fermo"
+    ],
+    "main": {
+        "unit": "config.json",
+        "apikey": "56989104be7410276956586c1fb09bf6",
+        "city": "Ancona",
+        "startdate": "2021-01-10"
+    }
+}
+```
+Dove:
+- "files": nomi dei file
+    - "configfile": nome del file di configurazione
+    - "datafile": nome del database
+- "numeric": parametri di configurazione numerici
+    - "logcounter": contatore dei log di errore scritti
+    - "delay": ritardo di base del thread gestito dal timer
+    - "periodicity": periodicità di default
+    - "initialdelay": ritardo iniziale del thread gestito dal timer
+    - "zoom": zoom di default
+    - "errorwidth": errore di default per le coordinate geografiche
+- "citylist": lista di città di default
+- "main": parametri di configurazione principali
+    - "unit": sistema di misura
+    - "apikey": API Key per poter effettuare chiamate a OpenWeather
+    - "city": città di default
+    - "startdate": data di inizio di default
+
+#### Mapping PUT
+Metodo per inizializzare i parametri di configurazione da file. Non richiede parametri in input. Il JSON restituito (dopo che i parametri sono stati aggiornati) è lo stesso della chiamata precedente.
+
+#### Mapping POST
+Metodo per inizializzare alcuni parametri di configurazione, controllando che siano corretti. Viene richiesto un body in JSON he può avere i seguenti campi:
+- "apikey": nuovo valore dell'API Key;
+- "city": nuovo nome della città di default;
+- "startdate": nuova data di inizio di default;
+- "unit": nuovo sistema di misurazione;
+- "database": nuovo nome del file database;
+- "zoom": nuovo valore dello zoom del box.
+
+**Esempio**
+Body:
+```json
+{
+    "zoom":12,
+    "city":"Fermo",
+    "apikey": "wrongKey"
+
+}
+```
+Risposta:
+```json
+{
+    "errorlist": [
+        {
+            "errorId": 306,
+            "info": "it.exception.InvalidParameterException",
+            "message": "The chosen API Key isn't valid, try with another one",
+            "timestamp": "2021-01-21_23:20:57"
+        }
+    ],
+    "message": "No internal errors occurred",
+    "info": "Updated parameters: default City, default Zoom."
+}
+```
+Dove:
+- "errorlist": lista delle modifiche fallite (vedi gestione delle eccezioni);
+- "message": messaggio sull'esito della chiamata
+- "info": lista delle modifiche andate a buon fine.
+
+#### Gestione del thread regolato da un timer
+La chiamata, con mapping POST, è del tipo
+```path
+    localhost:8080/tiemrtask/{action}
+```
+Dove:
+- "action": azione da eseguire, che può assumere i valori
+    - "start" per avviarlo;
+    - "stop" oppure "end" per terminarlo;
+    - "perform" per eseguire il thread una volta sola;
+    - "status" oppure "info" per ottenere le informazioni relative.
+Vi è inoltre un parametro booleano "forced", non necessario e utile sono nel caso in cui "action" sia "start", per riavviare forzatamente il thread nel caso sia già in esecuzione.
+
+**Esempio**
+Body:
+```path
+localhost:8080/timertask/start?forced=false
+```
+Risposta:
+```json
+{
+    "result": "Timed thread was not restarted",
+    "message": "No internal errors occurred",
+    "info": "Timed thread was already running"
+}
+```
 
 ## 4) Gestione delle eccezioni
 ### ErrorManager
+Le eccezioni sono gestite tramite "try-catch" e "throw(s)"
+Nel package "configuration" è presente la classe ErrorManager: questa è utilizzata in modo particolare nei "catch" presenti nelle classi "service": infatti, ogni volta che viene lanciata un eccezione viene creata e ritornata all'utente una nuova istanza di ErrorManager, che varia in base al tipo di eccezione. Nel caso si tratti di un errore interno di funzionamento, ErrorManager scrive anche un error log.
+
+**Esempio**
+Chiamata che lancia un'eccezione:
+```path
+    localhost:8080/weather/city?city=nonesiste
+```
+Risposta:
+```json
+{
+    "errorId": 305,
+    "info": "it.exception.DataNotFoundException",
+    "message": "Web server returned no data, city name might be invalid",
+    "timestamp": "2021-01-21_23:34:51"
+}
+```
+Dove:
+- "erroId": codice dell'errore (personalizzato)
+- "info": tipo di eccezione
+- "message": messaggio dell'errore
+- "timestamp": data in cui è stata lanciata l'eccezione
+
 ### Error Log
+Al seguente percorso:
+
+https://github.com/federicotombari-univpm/EsameProgrammazioneOggetti/tree/main/ProgettoOpenWeather/archive/error%20logs
+
+è disponibile un archivio di log di errori che ci sono capitati durante le realizzazione del progetto.
 
 ## 5) Aspetti Tecnici
-### Test
+### Test unitari
+I test unitari si trovano in una loro sezione a parte, divisi in quattro classi in base al tipo di test. Il percorso è [il seguente](https://github.com/federicotombari-univpm/EsameProgrammazioneOggetti/tree/main/ProgettoOpenWeather/src/test/java/it):
+
+```path
+    /ProgettoOpenWeather/src/test/java/it
+```
+
 ### Software e strumenti utilizzati
+- Eclipse (IDE) - principale
+- Visual Studio Code (IDE) - per il README.md
+- Spring framework (Spring Boot, Spring Initializer, ...)
+
 ### Librerie esterne
+- JSON Simple - versione 1.1.1
