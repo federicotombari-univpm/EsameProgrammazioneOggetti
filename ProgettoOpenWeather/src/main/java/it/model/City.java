@@ -70,7 +70,7 @@ public class City {
 
 	/**
 	 * Metodo setter dell'attributo 'weather'
-	 * @param weather le nuove informazioni meteo della città
+	 * @param cityWeather le nuove informazioni meteo della città
 	 */
 	public void setCityWeather(Weather cityWeather) {
 		this.weather = cityWeather;

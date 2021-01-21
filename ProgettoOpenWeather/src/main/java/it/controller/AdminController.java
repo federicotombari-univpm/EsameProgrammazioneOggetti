@@ -48,6 +48,7 @@ public class AdminController {
 	
 	/**
 	 * Metodo che permette di modificare alcuni parametri i configurazione a runtime attraverso un @RequestBody.
+	 * @param configurationBody i nuovi parametri di configurazione
 	 * @return una lista dei valori modificati, ed eventuali errori verificatisi nel processo
 	 */
 	@RequestMapping(value = "/config", method = RequestMethod.POST)

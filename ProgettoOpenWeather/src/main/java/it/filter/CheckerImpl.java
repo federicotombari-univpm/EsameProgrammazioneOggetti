@@ -30,7 +30,7 @@ public class CheckerImpl extends Operator implements Checker {
 	/**
 	 * Metodo che controlla che il parametro/filtro 'dateSpan' non sia vuoto (se lo è, modifica il valore di 'filterByDateSpan'), e
 	 * successivamente modificare il valore degli attributi 'startDate' e 'endDate' in base al contenuto del parametro.
-	 * @param datespan date che delimitano il periodo di cui si vogliono avere le statistiche 
+	 * @param dateSpan date che delimitano il periodo di cui si vogliono avere le statistiche 
 	 * @throws InvalidParameterException se il parametro ha più di due elementi
 	 * @throws java.text.ParseException in caso di errore nel parsing della stringa in data
 	 */

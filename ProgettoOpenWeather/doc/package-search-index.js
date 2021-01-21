@@ -1,1 +1,1 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"it"},{"l":"it.configuration"},{"l":"it.controller"},{"l":"it.exception"},{"l":"it.filter"},{"l":"it.model"},{"l":"it.service"},{"l":"it.utilities"}]
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"it.configuration"},{"l":"it.controller"},{"l":"it.exception"},{"l":"it.filter"},{"l":"it.model"},{"l":"it.service"},{"l":"it.utilities"}]
