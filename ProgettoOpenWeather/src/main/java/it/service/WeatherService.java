@@ -97,7 +97,7 @@ public class WeatherService {
 		if (name == null)
 			name = Configuration.getDefaultCity();
 		
-		double errorLon = 0, errorLat = 0;
+		double errorLon, errorLat;
 		
 		if (defineError == null)
 			return new ErrorManager(new InvalidParameterException(), "Invalid parameters: all 'errordef' parameters are missing", false);
@@ -237,8 +237,8 @@ public class WeatherService {
 		
 		try {
 			dataDownloader.chiamataAPI("box/city?bbox="
-					+weatherBox.getMinCoords().getLatitude()+","+weatherBox.getMinCoords().getLongitude()+","
-					+weatherBox.getMaxCoords().getLatitude()+","+weatherBox.getMaxCoords().getLongitude()+","
+					+weatherBox.getMinCoords().getLongitude()+","+weatherBox.getMinCoords().getLatitude()+","
+					+weatherBox.getMaxCoords().getLongitude()+","+weatherBox.getMaxCoords().getLatitude()+","
 					+weatherBox.getZoom());
 			
 		} catch (IOException e) {

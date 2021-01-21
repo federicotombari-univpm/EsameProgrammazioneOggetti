@@ -27,7 +27,6 @@ import org.json.simple.JSONObject;
  * desiderano. I metodi consentono di ottenere dati per una città singola o per un elemento di una lista di città. Le eccezioni sono gestite
  * tramite throw(s).
  * @author FedericoTombari
- *
  */
 public class DataDownloader {
 	

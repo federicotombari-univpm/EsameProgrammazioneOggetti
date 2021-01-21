@@ -26,7 +26,7 @@ public class AdminService {
 	private DatabaseManager databaseManager = new DatabaseManager();
 	private ThreadManager threadManager = new ThreadManager();
 	private Vector<ErrorManager> errorList = new Vector<ErrorManager>();
-	private String updatedParams = new String("Updated parameters: ");
+	private String updatedParams;
 	
 	/**
 	 * Metodo che inizializza nuovamente i parametri di configurazione servendosi di un metodo della classe Configuration,
@@ -60,6 +60,7 @@ public class AdminService {
 	 */
 	public Object checkAndChangeConfig(JSONObject newConfig) {
 		HashMap<String,Object> hashmap = new HashMap<String,Object>();
+		updatedParams = new String("Updated parameters: ");
 		
 		if(newConfig.containsKey("apikey"))	
 			this.checkAndChangeApiKey((String) newConfig.get("apikey"));
@@ -101,10 +102,12 @@ public class AdminService {
 	 */
 	public void checkAndChangeApiKey (String apiKey) {
 		try {
-			dataDownloader.chiamataAPI("weather?q="+Configuration.getDefaultCity());
 			Configuration.setApiKey(apiKey);
+			dataDownloader.chiamataAPI("weather?q="+Configuration.getDefaultCity());
 			updatedParams = new String(updatedParams+"API Key, ");
+			
 		} catch (Exception e) {
+			Configuration.setApiKey("56989104be7410276956586c1fb09bf6");
 			errorList.add(new ErrorManager(new InvalidParameterException(),"The chosen API Key isn't valid, try with another one", false));
 		}
 	}

@@ -87,7 +87,7 @@ public class Configuration {
 		main.put("apikey", apiKey);
 		main.put("city", defaultCity);
 		main.put("startdate", defaultStartDate);
-		main.put("unit", configurationFilename);
+		main.put("unit", measurementSystem);
 		screenshot.put("files", files);
 		files.put("datafile", databaseFilename);
 		files.put("configfile", configurationFilename);
