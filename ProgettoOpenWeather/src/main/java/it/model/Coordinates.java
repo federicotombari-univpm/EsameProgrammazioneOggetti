@@ -57,8 +57,8 @@ public class Coordinates {
 	}
 
 	/**
-	 * Metodo setter dell'attributo 'longitudine'.
-	 * @param longitudine il nuovo valore della longitudine
+	 * Metodo setter dell'attributo 'longitude'.
+	 * @param longitude il nuovo valore della longitudine
 	 */
 	public void setLongitude(double longitude) {
 		this.longitude = longitude;

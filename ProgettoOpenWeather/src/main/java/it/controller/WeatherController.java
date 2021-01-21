@@ -53,7 +53,7 @@ public class WeatherController {
 	/**
 	 * Metodo che, date delle coordinate geografiche, utilizza un metodo della classe WeatherService per
 	 * definire un area geografica ed ottenere le informazioni meteo relative alle principali città di quella zona.
-	 * @param definebox le coordinate dell'area geografica
+	 * @param defineBox le coordinate dell'area geografica
 	 * @return una lista di città con le relative informazioni meteo e coordinate
 	 */
 	// box a partire da coordinate

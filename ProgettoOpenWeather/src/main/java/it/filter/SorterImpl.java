@@ -16,7 +16,7 @@ public class SorterImpl extends Operator implements Sorter {
 	
 	/**
 	 * Costruttore della classe, che utilizza un oggetto di tipo CheckerImpl per inizializzare gli attributi.
-	 * @param l'oggetto da cui ottenere i dati
+	 * @param checker l'oggetto da cui ottenere i dati
 	 * @throws ParseException eccezione lanciata dal costruttore della superclasse
 	 */
 	public SorterImpl(CheckerImpl checker) throws ParseException {
@@ -29,7 +29,7 @@ public class SorterImpl extends Operator implements Sorter {
 	/**
 	 * Metodo che stabilisce quale altro metodo della classe chiamare, e con quali parametri, in base al contenuto dell'attributo 'sortingType_main'.
 	 * @param jsonData i dati filtrati da riordinare
-	 * @return 
+	 * @return i dati riordinati
 	 */
 	public JSONArray sortData(JSONArray jsonData) {
 		if (sortFilteredData) {

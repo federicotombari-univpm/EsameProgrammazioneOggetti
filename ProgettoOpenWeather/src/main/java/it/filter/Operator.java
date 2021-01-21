@@ -119,4 +119,12 @@ public class Operator {
 		visibilityRequested = value;
 	}
 	
+	/**
+	 * Metodo getter dell'attributo 'cityList'
+	 * @return la lista di città di cui elaborare le statistiche meteo
+	 */
+	public Vector<String> getCityList() {
+		return cityList;
+	}
+	
 }

@@ -250,7 +250,7 @@ public class Configuration {
 	
 	/**
 	 * Metodo setter dell'attributo 'measurementSystem'
-	 * @param measurementSystem il nuovo sistema di misurazione
+	 * @param defaultTempUnit il nuovo sistema di misurazione
 	 */
 	public static void setMeasurementSystem(String defaultTempUnit) {
 		Configuration.measurementSystem = defaultTempUnit;

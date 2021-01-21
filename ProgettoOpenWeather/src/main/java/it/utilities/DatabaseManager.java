@@ -96,7 +96,9 @@ public class DatabaseManager{
 	/**
 	 * Metodo che crea e apre un canale di output e salva l'attributo 'localData' in un file JSON, il cui nome è dato dal campo 'databaseFilename'
 	 * di Configuration. Se il file è già presente, esso viene sovrascritto, altrimenti ne viene creato uno nuovo.
+	 * @throws FileNotFoundException in caso di fallimento della ricerca del file
 	 * @throws IOException in caso di errori nelle operazioni di input (apertura/lettura/chiusura).
+	 * @throws ParseException in caso di errori nel parsing del JSON
 	 */
 	public void loadDatabase() throws ParseException, FileNotFoundException, IOException { 	
 		loadedData = new JSONArray();

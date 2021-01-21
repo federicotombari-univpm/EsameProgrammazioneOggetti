@@ -92,7 +92,7 @@ public class Box {
 	 * @param zoom il nuovo valore da assegnare allo zoom del Box
 	 */
 	public void setZoom(int zoom) {
-		this.zoom = zoom;
+		this.zoom = Math.abs(zoom);
 	}
 	
 }

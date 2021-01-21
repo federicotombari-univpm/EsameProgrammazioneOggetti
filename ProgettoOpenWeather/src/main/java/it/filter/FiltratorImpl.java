@@ -22,7 +22,7 @@ public class FiltratorImpl extends Operator implements Filtrator {
 	
 	/**
 	 * Costruttore della classe, che utilizza un oggetto di tipo CheckerImpl per inizializzare gli attributi.
-	 * @param l'oggetto da cui ottenere i dati
+	 * @param checker l'oggetto da cui ottenere i dati
 	 * @throws ParseException eccezione lanciata dal costruttore della superclasse
 	 */
 	public FiltratorImpl(CheckerImpl checker) throws ParseException {
@@ -277,8 +277,8 @@ public class FiltratorImpl extends Operator implements Filtrator {
 		JSONObject statsElement = new JSONObject();
 		double average = Utilities.calcAverage(values);
 		double variance = Utilities.calcVariance(values, average);
-		statsElement.put("average", Utilities.roundDouble(average));
-		statsElement.put("variance", Utilities.roundDouble(variance));
+		statsElement.put("average", average);
+		statsElement.put("variance", variance);
 		return statsElement;
 	}
 }
