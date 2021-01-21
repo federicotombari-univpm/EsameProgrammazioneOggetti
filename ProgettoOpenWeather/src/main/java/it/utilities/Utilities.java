@@ -27,7 +27,7 @@ public class Utilities {
 	 * @return il valore arrotondato, in double
 	 */
 	public static double roundDouble(double value) {
-		return Math.round(value*1000)/1000;
+		return ((double)Math.round(value*1000))/1000;
 	}
 	
 	/**
@@ -39,7 +39,7 @@ public class Utilities {
 		double sum = 0;
 		for (double value : list)
 			sum+=value;
-		return sum/list.size();
+		return Utilities.roundDouble(sum/list.size());
 	}
 	
 	/**
@@ -52,7 +52,7 @@ public class Utilities {
 		double sum = 0;
 		for (double value : list)
 			sum+=Math.pow(value-average, 2);
-		return sum/list.size();
+		return Utilities.roundDouble(sum/list.size());
 		
 	}
 	
